@@ -28,7 +28,7 @@ public class GameMap {
                 } else if(y == 3 && x == 3) {
                     terrainType = TerrainType.SWAMP;
                 } else if(y == 5 && x == 3) {
-                    terrainType = terrainType.TREE;
+                    terrainType = TerrainType.TREE;
                 } else {
                     terrainType = TerrainType.NORMAL;
                 }
