@@ -1,0 +1,167 @@
+package com.ibra.tacticalrpg.entities;
+
+import com.ibra.tacticalrpg.item.Item;
+import com.ibra.tacticalrpg.job.Job;
+import com.ibra.tacticalrpg.map.GameMap;
+import com.ibra.tacticalrpg.map.Tile;
+import com.ibra.tacticalrpg.skill.Skill;
+
+import java.util.*;
+
+import static com.ibra.tacticalrpg.grid.GridUtils.findEntityTile;
+
+public abstract class Entity {
+    protected final String name;
+    protected int level = 1;
+    protected EntityStats stats;
+    protected Job job;
+    protected List<Item> inventory;
+    protected List<Skill> skills;
+
+    protected boolean movedThisTurn = false;
+    protected boolean tookActionThisTurn = false;  // mudando de actedThisTurn para tookActionThisTurn
+
+    // Movimentação
+    protected List<Tile> movePath = new ArrayList<>();
+    protected float moveProgress = 0f;
+    protected static final float MOVE_SPEED = 6f;
+
+    public Entity(String name, EntityStats stats, Job job) {
+        this.name = name;
+        this.stats = stats;
+        this.job = job;
+        this.inventory = new ArrayList<>();
+        this.skills = new ArrayList<>();
+    }
+
+    public abstract void takeTurn();
+
+    public void levelUp() {
+        level++;
+//        stats.increaseStatsForLevelUp();
+        job.applyInitialStats(stats);
+    }
+
+    public Set<Tile> getMovableCells(GameMap grid) {
+        Set<Tile> reachable = new HashSet<>();
+        Queue<Tile> queue = new LinkedList<>();
+        Map<Tile, Integer> distance = new HashMap<>();
+        Tile start = findEntityTile(grid, this);
+        queue.add(start);
+        distance.put(start, 0);
+
+        while (!queue.isEmpty()) {
+            Tile current = queue.poll();
+            int dist = distance.get(current);
+            if (dist > 0 && !current.isOccupied()) {
+                reachable.add(current);
+            }
+            if (dist == this.stats.getMoveRange()) continue;
+            for (int[] d : new int[][]{{1,0},{-1,0},{0,1},{0,-1}}) {
+                Tile neighbor = grid.getTile(current.getX() + d[0], current.getY() + d[1]);
+                if (neighbor == null ||
+                    neighbor.getTerrainType().isObstacle() ||
+                    (neighbor.isOccupied() && neighbor.getOccupant() != this)) {
+                    continue;
+                }
+                int totalCost = dist + neighbor.getTerrainType().getMovementCost();
+                if( totalCost > this.stats.getMoveRange()) {
+                    continue; // Não ultrapassar o alcance de movimento
+                }
+                if (!distance.containsKey(neighbor) || totalCost < distance.get(neighbor)) {
+                    distance.put(neighbor, totalCost);
+                    queue.add(neighbor);
+                }
+            }
+        }
+        return reachable;
+    }
+
+    public Set<Tile> getAttackableCells(GameMap grid) {
+        Set<Tile> attackable = new HashSet<>();
+        Tile start = findEntityTile(grid, this);
+        if (start == null) return attackable;
+
+        int range = stats.getAttackRange();
+        for (int dx = -range; dx <= range; dx++) {
+            for (int dy = -range; dy <= range; dy++) {
+                if (Math.abs(dx) + Math.abs(dy) <= range) {
+                    Tile cell = grid.getTile(start.getX() + dx, start.getY() + dy);
+                    if (cell != null && cell != start) {
+                        attackable.add(cell);
+                    }
+                }
+            }
+        }
+        return attackable;
+    }
+
+    public boolean isMoving() {
+        return !movePath.isEmpty();
+    }
+
+    public void updateMovement(GameMap grid, float delta) {
+        if (!movePath.isEmpty()) {
+            moveProgress += delta * MOVE_SPEED;
+            if (moveProgress >= 1f) {
+                moveProgress = 0f;
+                Tile next = movePath.remove(0);
+                if (next.getTerrainType().isObstacle()) {
+                    movePath.clear();
+                    return;
+                }
+                Tile current = findEntityTile(grid, this);
+                if (current != null) {
+                    current.setOccupant(null);
+                }
+                next.setOccupant(this);
+                if(!isMoving()) {
+                    next.applyEffect(this);
+                }
+            }
+        }
+    }
+
+    public boolean isAlive() {
+        return stats.getCurrentHp() > 0;
+    }
+
+    public void resetTurn() {
+        movedThisTurn = false;
+        tookActionThisTurn = false;
+    }
+
+    public boolean isTurnDone() {
+        return movedThisTurn && tookActionThisTurn && !isMoving();
+    }
+
+    // Getters e Setters
+    public String getName() {
+        return name;
+    }
+
+    public EntityStats getStats() {
+        return stats;
+    }
+
+    public boolean hasMoved() {
+        return movedThisTurn;
+    }
+
+    public void setMovedThisTurn(boolean movedThisTurn) {
+        this.movedThisTurn = movedThisTurn;
+    }
+
+    public boolean hasActed() {
+        return tookActionThisTurn;
+    }
+
+    public void setActedThisTurn(boolean acted) {
+        this.tookActionThisTurn = acted;
+    }
+
+    public void setMovePath(List<Tile> path) {
+        this.movePath.clear();
+        this.movePath.addAll(path);
+    }
+}
