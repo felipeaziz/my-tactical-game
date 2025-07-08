@@ -1,8 +1,8 @@
 package com.ibra.tacticalrpg.action;
 
 import com.ibra.tacticalrpg.entities.Entity;
-import com.ibra.tacticalrpg.map.GameMap;
-import com.ibra.tacticalrpg.map.Tile;
+import com.ibra.tacticalrpg.map.orthogonal.GameMap;
+import com.ibra.tacticalrpg.map.orthogonal.Tile;
 
 public class AttackAction implements Action {
     private final GameMap gameMap;

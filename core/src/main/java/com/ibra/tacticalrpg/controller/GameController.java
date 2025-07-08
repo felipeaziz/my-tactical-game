@@ -5,7 +5,7 @@ import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.EntityStats;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
 import com.ibra.tacticalrpg.job.Aprentice;
-import com.ibra.tacticalrpg.map.GameMap;
+import com.ibra.tacticalrpg.map.orthogonal.GameMap;
 
 import java.util.ArrayList;
 import java.util.List;

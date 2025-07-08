@@ -1,6 +1,7 @@
-package com.ibra.tacticalrpg.map;
+package com.ibra.tacticalrpg.map.orthogonal;
 
 import com.ibra.tacticalrpg.entities.Entity;
+import com.ibra.tacticalrpg.map.TerrainType;
 import com.ibra.tacticalrpg.map.terraineffect.TerrainEffect;
 
 public class Tile {

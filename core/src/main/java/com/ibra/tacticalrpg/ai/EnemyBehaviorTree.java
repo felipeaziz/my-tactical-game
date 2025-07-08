@@ -6,8 +6,8 @@ import com.ibra.tacticalrpg.entities.EnemyEntity;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
 import com.ibra.tacticalrpg.grid.GridUtils;
-import com.ibra.tacticalrpg.map.GameMap;
-import com.ibra.tacticalrpg.map.Tile;
+import com.ibra.tacticalrpg.map.orthogonal.GameMap;
+import com.ibra.tacticalrpg.map.orthogonal.Tile;
 
 import java.util.List;
 import java.util.Set;

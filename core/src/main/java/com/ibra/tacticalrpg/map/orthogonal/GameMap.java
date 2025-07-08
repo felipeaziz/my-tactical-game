@@ -1,6 +1,7 @@
-package com.ibra.tacticalrpg.map;
+package com.ibra.tacticalrpg.map.orthogonal;
 
 import com.ibra.tacticalrpg.entities.Entity;
+import com.ibra.tacticalrpg.map.TerrainType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class GameMap {
 
     private void initializeGrid() {
         for (int x = 0; x < width; x++) {
-            TerrainType terrainType = TerrainType.NORMAL;
+            TerrainType terrainType;
             for (int y = 0; y < height; y++) {
                 if(y == 0 || y == height - 1 || x == 0 || x == width - 1) {
                     terrainType = TerrainType.WALL; // Set walls around the edges

@@ -2,8 +2,8 @@ package com.ibra.tacticalrpg.entities;
 
 import com.ibra.tacticalrpg.item.Item;
 import com.ibra.tacticalrpg.job.Job;
-import com.ibra.tacticalrpg.map.GameMap;
-import com.ibra.tacticalrpg.map.Tile;
+import com.ibra.tacticalrpg.map.orthogonal.GameMap;
+import com.ibra.tacticalrpg.map.orthogonal.Tile;
 import com.ibra.tacticalrpg.skill.Skill;
 
 import java.util.*;

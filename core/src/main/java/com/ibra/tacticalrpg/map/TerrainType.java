@@ -6,16 +6,16 @@ import com.ibra.tacticalrpg.map.terraineffect.PoisonEffect;
 import com.ibra.tacticalrpg.map.terraineffect.TerrainEffect;
 
 public enum TerrainType {
-    NORMAL(false, 1, null, "normal.PNG"),
-    WATER(false, 2, null, "water.PNG"),
-    ROCK(true, Integer.MAX_VALUE, null, "rock.PNG"),
-    TREE(true, Integer.MAX_VALUE, null, "tree.PNG"),
-    GRASS(false, 1, null, "grass.PNG"),
-    SAND(false, 1, null, "desert.PNG"),
-    SNOW(false, 1, null, "snow.PNG"),
-    SWAMP(false, 2, new PoisonEffect(), "swamp.PNG"),
-    LAVA(true, Integer.MAX_VALUE, new BurnEffect(), "lava.PNG"),
-    WALL(true, Integer.MAX_VALUE, null, "rock.PNG"); //temporary texture for walls
+    NORMAL(false, 1, null, "normal.png"),
+    WATER(false, 2, null, "water.png"),
+    ROCK(true, Integer.MAX_VALUE, null, "rock.png"),
+    TREE(true, Integer.MAX_VALUE, null, "tree.png"),
+    GRASS(false, 1, null, "grass.png"),
+    SAND(false, 1, null, "desert.png"),
+    SNOW(false, 1, null, "snow.png"),
+    SWAMP(false, 2, new PoisonEffect(), "swamp.png"),
+    LAVA(true, Integer.MAX_VALUE, new BurnEffect(), "lava.png"),
+    WALL(true, Integer.MAX_VALUE, null, "rock.png"); //temporary texture for walls
 
     private final boolean isObstacle;
     private final int movementCost;

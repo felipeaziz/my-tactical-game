@@ -4,6 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.ibra.tacticalrpg.isometric.GameScreen;
+import com.ibra.tacticalrpg.map.terraineffect.TextureCache;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class TacticalRPG extends Game {
@@ -13,7 +15,8 @@ public class TacticalRPG extends Game {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        setScreen(new BattleScreen(this));
+        setScreen(new GameScreen(this));
+//        setScreen(new BattleScreen(this));
         image = new Texture("libgdx.png");
     }
 
@@ -35,6 +38,7 @@ public class TacticalRPG extends Game {
         batch.dispose();
         getScreen().dispose();
         image.dispose();
+        TextureCache.disposeAll();
     }
 }
 

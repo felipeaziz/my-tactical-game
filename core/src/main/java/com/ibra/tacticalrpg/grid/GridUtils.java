@@ -2,8 +2,8 @@ package com.ibra.tacticalrpg.grid;
 
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.controller.GameController;
-import com.ibra.tacticalrpg.map.GameMap;
-import com.ibra.tacticalrpg.map.Tile;
+import com.ibra.tacticalrpg.map.orthogonal.GameMap;
+import com.ibra.tacticalrpg.map.orthogonal.Tile;
 
 import java.util.*;
 

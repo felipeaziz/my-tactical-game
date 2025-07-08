@@ -19,7 +19,7 @@ import com.ibra.tacticalrpg.entities.EnemyEntity;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
 import com.ibra.tacticalrpg.map.TerrainType;
-import com.ibra.tacticalrpg.map.Tile;
+import com.ibra.tacticalrpg.map.orthogonal.Tile;
 import com.ibra.tacticalrpg.ui.EventLog;
 
 import java.util.Arrays;
