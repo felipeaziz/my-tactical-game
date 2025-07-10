@@ -11,7 +11,7 @@ public enum TerrainType {
     ROCK(true, Integer.MAX_VALUE, null, "rock.png"),
     TREE(true, Integer.MAX_VALUE, null, "tree.png"),
     GRASS(false, 1, null, "grass.png"),
-    SAND(false, 1, null, "desert.png"),
+    SAND(false, 1, null, "sand.png"),
     SNOW(false, 1, null, "snow.png"),
     SWAMP(false, 2, new PoisonEffect(), "swamp.png"),
     LAVA(true, Integer.MAX_VALUE, new BurnEffect(), "lava.png"),

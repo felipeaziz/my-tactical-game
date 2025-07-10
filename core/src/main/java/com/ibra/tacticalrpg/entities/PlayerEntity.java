@@ -7,15 +7,13 @@ import com.ibra.tacticalrpg.controller.GameController;
 import com.ibra.tacticalrpg.controller.PlayerController;
 import com.ibra.tacticalrpg.job.Job;
 
-import java.util.List;
-
 public class PlayerEntity extends Entity {
     private transient GameContext gameContext;
     private Action currentAction = null;
     private boolean actionDone = false;
 
-    public PlayerEntity(String name, EntityStats stats, Job job) {
-        super(name, stats, job);
+    public PlayerEntity(String name, Job job) {
+        super(name, job);
     }
 
     public void setGameContext(GameContext gameContext) {

@@ -3,6 +3,7 @@ package com.ibra.tacticalrpg.map.isometric;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -25,11 +26,14 @@ public class Tile {
     }
 
     public void renderTexture(SpriteBatch batch) {
-        batch.draw(TextureCache.getTexture(terrainType),
-            worldPosition.x - 32,
+        Texture texture = TextureCache.getTexture(terrainType);
+        int texWidth = texture.getWidth();
+        int texHeight = texture.getHeight();
+        batch.draw(texture,
+            worldPosition.x - (texWidth / 2f),
             worldPosition.y - 16,
-            64,
-            32);
+            texWidth,
+            texHeight);
     }
 
     public void renderOutline(ShapeRenderer shapeRenderer) {

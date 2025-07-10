@@ -1,25 +1,22 @@
 package com.ibra.tacticalrpg.isometric;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.MathUtils;
 import com.ibra.tacticalrpg.TacticalRPG;
 import com.ibra.tacticalrpg.controller.CameraController;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 
 public class GameScreen extends ScreenAdapter {
     private final TacticalRPG game;
-    private OrthographicCamera camera;
-    private CameraController cameraController;
-    private GameMap map;
+    private final OrthographicCamera camera;
+    private final CameraController cameraController;
+    private final GameMap map;
 
     public GameScreen(TacticalRPG game) {
         this.game = game;
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.position.set(0, (9+9)*32/4f, 0); // Start at the origin
+        camera.position.set(0, (9 + 9) * 32 / 4f, 0); // Start at the origin
         cameraController = new CameraController(camera);
         this.map = new GameMap();
     }

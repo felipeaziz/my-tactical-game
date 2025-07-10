@@ -4,7 +4,6 @@ import com.ibra.tacticalrpg.item.Item;
 import com.ibra.tacticalrpg.job.Job;
 import com.ibra.tacticalrpg.map.orthogonal.GameMap;
 import com.ibra.tacticalrpg.map.orthogonal.Tile;
-import com.ibra.tacticalrpg.skill.Skill;
 
 import java.util.*;
 
@@ -16,7 +15,6 @@ public abstract class Entity {
     protected EntityStats stats;
     protected Job job;
     protected List<Item> inventory;
-    protected List<Skill> skills;
 
     protected boolean movedThisTurn = false;
     protected boolean tookActionThisTurn = false;  // mudando de actedThisTurn para tookActionThisTurn
@@ -26,12 +24,11 @@ public abstract class Entity {
     protected float moveProgress = 0f;
     protected static final float MOVE_SPEED = 6f;
 
-    public Entity(String name, EntityStats stats, Job job) {
+    public Entity(String name, Job job) {
         this.name = name;
-        this.stats = stats;
         this.job = job;
+        this.stats = job.applyInitialStats();
         this.inventory = new ArrayList<>();
-        this.skills = new ArrayList<>();
     }
 
     public abstract void takeTurn();
@@ -39,7 +36,8 @@ public abstract class Entity {
     public void levelUp() {
         level++;
 //        stats.increaseStatsForLevelUp();
-        job.applyInitialStats(stats);
+        stats.setCurrentHp(stats.getMaxHp()); // Restaura HP ao subir de nível
+        // Aqui você pode adicionar lógica para aumentar outras estatísticas, como ataque, defesa, etc.
     }
 
     public Set<Tile> getMovableCells(GameMap grid) {
