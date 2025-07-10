@@ -1,5 +1,6 @@
 package com.ibra.tacticalrpg.entities;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.ibra.tacticalrpg.item.Item;
 import com.ibra.tacticalrpg.job.Job;
 import com.ibra.tacticalrpg.map.orthogonal.GameMap;
@@ -32,6 +33,7 @@ public abstract class Entity {
     }
 
     public abstract void takeTurn();
+    public abstract Texture getTexture();
 
     public void levelUp() {
         level++;

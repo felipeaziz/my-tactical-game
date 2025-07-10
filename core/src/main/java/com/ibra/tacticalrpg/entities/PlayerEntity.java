@@ -1,5 +1,6 @@
 package com.ibra.tacticalrpg.entities;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.ibra.tacticalrpg.GameContext;
 import com.ibra.tacticalrpg.action.Action;
 import com.ibra.tacticalrpg.controller.EventLogger;
@@ -11,9 +12,11 @@ public class PlayerEntity extends Entity {
     private transient GameContext gameContext;
     private Action currentAction = null;
     private boolean actionDone = false;
+    private transient Texture texture;
 
     public PlayerEntity(String name, Job job) {
         super(name, job);
+        this.texture = new Texture("job/player/" + job.getName().toLowerCase() + ".png");
     }
 
     public void setGameContext(GameContext gameContext) {
@@ -42,6 +45,11 @@ public class PlayerEntity extends Entity {
         super.resetTurn();
         setActionDone(false);
         setCurrentAction(null);
+    }
+
+    @Override
+    public Texture getTexture() {
+        return texture;
     }
 
     public Action getCurrentAction() {

@@ -1,6 +1,5 @@
 package com.ibra.tacticalrpg.job;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.ibra.tacticalrpg.entities.EntityStats;
 import com.ibra.tacticalrpg.skill.Skill;
 
@@ -11,13 +10,11 @@ public abstract class Job {
     protected final String name;
     protected final String description;
     protected List<Skill> skills;
-    protected Texture texture;
 
     public Job(String name, String description) {
         this.name = name;
         this.description = description;
         this.skills = new ArrayList<>();
-        this.texture = new Texture("job/" + name.toLowerCase() + ".png"); // Assuming textures are named after the job
     }
 
     public String getName() {
@@ -36,14 +33,6 @@ public abstract class Job {
         if (skill != null && !skills.contains(skill)) {
             skills.add(skill);
         }
-    }
-
-    public Texture getTexture() {
-        return texture;
-    }
-
-    public void setTexture(Texture texture) {
-        this.texture = texture;
     }
 
     public abstract EntityStats applyInitialStats();
