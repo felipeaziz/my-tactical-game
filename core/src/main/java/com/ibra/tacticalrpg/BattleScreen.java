@@ -116,27 +116,27 @@ public class BattleScreen implements Screen, EventLogger {
         actionHint.append(currentPlayer.hasMoved() ? "" : "[1] Mover  ");
         actionHint.append(currentPlayer.hasActed() ? "" : "[2] Atacar  ");
         actionHint.append("[3] Encerrar turno");
-        font.draw(game.getBatch(),
-            actionHint.toString(),
-            GRID_ORIGIN_X,
-            GRID_ORIGIN_Y + gameContext.getGameController().getGrid().getHeight() * CELL_SIZE + 30);
+//        font.draw(game.getBatch(),
+//            actionHint.toString(),
+//            GRID_ORIGIN_X,
+//            GRID_ORIGIN_Y + gameContext.getGameController().getGrid().getHeight() * CELL_SIZE + 30);
     }
 
     private void drawLogs() {
-        font.setColor(Color.LIGHT_GRAY);
-        int logY = GRID_ORIGIN_Y + gameContext.getGameController().getGrid().getHeight() * CELL_SIZE;
-        int logX = GRID_ORIGIN_X + gameContext.getGameController().getGrid().getWidth() * CELL_SIZE + 10;
-        font.draw(game.getBatch(), "Log de eventos:", logX, logY);
-        int offset = 0;
-        for (String logMsg : eventLog.getLog()) {
-            font.draw(game.getBatch(), logMsg, logX, logY - 15 * (++offset));
-        }
+//        font.setColor(Color.LIGHT_GRAY);
+//        int logY = GRID_ORIGIN_Y + gameContext.getGameController().getGrid().getHeight() * CELL_SIZE;
+//        int logX = GRID_ORIGIN_X + gameContext.getGameController().getGrid().getWidth() * CELL_SIZE + 10;
+//        font.draw(game.getBatch(), "Log de eventos:", logX, logY);
+//        int offset = 0;
+//        for (String logMsg : eventLog.getLog()) {
+//            font.draw(game.getBatch(), logMsg, logX, logY - 15 * (++offset));
+//        }
     }
 
     private void checkEndGame() {
         if (turnState == TurnState.GAME_OVER) return;  // Se já está em GAME_OVER, não precisa verificar novamente
 
-        gameContext.getGameController().updateGameStatus();
+//        gameContext.getGameController().updateGameStatus();
         if (gameContext.getGameController().getGameStatus() == GameController.GameStatus.PLAYER_DEFEAT) {
             turnState = TurnState.GAME_OVER;
             eventLog.add("Você perdeu!");
@@ -150,7 +150,7 @@ public class BattleScreen implements Screen, EventLogger {
 
     private void handleTurns() {
         if (turnState == TurnState.GAME_OVER) return;
-        gameContext.getGameController().advanceTurn();
+//        gameContext.getGameController().advanceTurn();
     }
 
     @Override
@@ -174,17 +174,17 @@ public class BattleScreen implements Screen, EventLogger {
             }
         });
         game.getBatch().begin();
-        for(int x = 0; x < gameContext.getGameController().getGrid().getWidth(); x++) {
-            for (int y = 0; y < gameContext.getGameController().getGrid().getHeight(); y++) {
-                Tile cell = gameContext.getGameController().getGrid().getTile(x, y);
-                int drawY = GRID_ORIGIN_Y + (gameContext.getGameController().getGrid().getHeight() - 1 - y) * CELL_SIZE;
-                int drawX = GRID_ORIGIN_X + x * CELL_SIZE;
-                Texture texture = terrainTextures.get(cell.getTerrainType());
-                if (texture != null) {
-                    game.getBatch().draw(texture, drawX, drawY, CELL_SIZE, CELL_SIZE);
-                }
-            }
-        }
+//        for(int x = 0; x < gameContext.getGameController().getGrid().getWidth(); x++) {
+//            for (int y = 0; y < gameContext.getGameController().getGrid().getHeight(); y++) {
+//                Tile cell = gameContext.getGameController().getGrid().getTile(x, y);
+//                int drawY = GRID_ORIGIN_Y + (gameContext.getGameController().getGrid().getHeight() - 1 - y) * CELL_SIZE;
+//                int drawX = GRID_ORIGIN_X + x * CELL_SIZE;
+//                Texture texture = terrainTextures.get(cell.getTerrainType());
+//                if (texture != null) {
+//                    game.getBatch().draw(texture, drawX, drawY, CELL_SIZE, CELL_SIZE);
+//                }
+//            }
+//        }
         game.getBatch().end();
     }
 
@@ -201,11 +201,11 @@ public class BattleScreen implements Screen, EventLogger {
                 } else if (currentAction instanceof AttackAction) {
                     shapeRenderer.setColor(1f, 0.4f, 0.4f, 0.4f);
                 }
-                for (Tile cell : highlights) {
-                    int drawY = GRID_ORIGIN_Y + (gameContext.getGameController().getGrid().getHeight() - 1 - cell.getY()) * CELL_SIZE;
-                    int drawX = GRID_ORIGIN_X + cell.getX() * CELL_SIZE;
-                    shapeRenderer.rect(drawX, drawY, CELL_SIZE, CELL_SIZE);
-                }
+//                for (Tile cell : highlights) {
+//                    int drawY = GRID_ORIGIN_Y + (gameContext.getGameController().getGrid().getHeight() - 1 - cell.getY()) * CELL_SIZE;
+//                    int drawX = GRID_ORIGIN_X + cell.getX() * CELL_SIZE;
+//                    shapeRenderer.rect(drawX, drawY, CELL_SIZE, CELL_SIZE);
+//                }
                 shapeRenderer.end();
             }
         }
@@ -213,73 +213,73 @@ public class BattleScreen implements Screen, EventLogger {
 
     private void drawGridLines() {
         // Sempre desenha as linhas do grid
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.LIGHT_GRAY);
-        for (int x = 0; x <= gameContext.getGameController().getGrid().getWidth(); x++) {
-            shapeRenderer.line(GRID_ORIGIN_X + x * CELL_SIZE,
-                GRID_ORIGIN_Y,
-                GRID_ORIGIN_X + x * CELL_SIZE,
-                GRID_ORIGIN_Y + gameContext.getGameController().getGrid().getHeight() * CELL_SIZE);
-        }
-        for (int y = 0; y <= gameContext.getGameController().getGrid().getHeight(); y++) {
-            int drawY = GRID_ORIGIN_Y + (gameContext.getGameController().getGrid().getHeight() - y) * CELL_SIZE;
-            shapeRenderer.line(GRID_ORIGIN_X,
-                drawY,
-                GRID_ORIGIN_X + gameContext.getGameController().getGrid().getWidth() * CELL_SIZE,
-                drawY);
-        }
-
-        Tile hovered = getTileUnderMouse();
-        if (hovered != null) {
-            int drawX = GRID_ORIGIN_X + hovered.getX() * CELL_SIZE;
-            int drawY = GRID_ORIGIN_Y + (gameContext.getGameController().getGrid().getHeight() - 1 - hovered.getY()) * CELL_SIZE;
-            shapeRenderer.setColor(Color.GOLD); // cor de destaque
-            shapeRenderer.rect(drawX, drawY, CELL_SIZE, CELL_SIZE);
-        }
-        shapeRenderer.end();
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//        shapeRenderer.setColor(Color.LIGHT_GRAY);
+//        for (int x = 0; x <= gameContext.getGameController().getGrid().getWidth(); x++) {
+//            shapeRenderer.line(GRID_ORIGIN_X + x * CELL_SIZE,
+//                GRID_ORIGIN_Y,
+//                GRID_ORIGIN_X + x * CELL_SIZE,
+//                GRID_ORIGIN_Y + gameContext.getGameController().getGrid().getHeight() * CELL_SIZE);
+//        }
+//        for (int y = 0; y <= gameContext.getGameController().getGrid().getHeight(); y++) {
+//            int drawY = GRID_ORIGIN_Y + (gameContext.getGameController().getGrid().getHeight() - y) * CELL_SIZE;
+//            shapeRenderer.line(GRID_ORIGIN_X,
+//                drawY,
+//                GRID_ORIGIN_X + gameContext.getGameController().getGrid().getWidth() * CELL_SIZE,
+//                drawY);
+//        }
+//
+//        Tile hovered = getTileUnderMouse();
+//        if (hovered != null) {
+//            int drawX = GRID_ORIGIN_X + hovered.getX() * CELL_SIZE;
+//            int drawY = GRID_ORIGIN_Y + (gameContext.getGameController().getGrid().getHeight() - 1 - hovered.getY()) * CELL_SIZE;
+//            shapeRenderer.setColor(Color.GOLD); // cor de destaque
+//            shapeRenderer.rect(drawX, drawY, CELL_SIZE, CELL_SIZE);
+//        }
+//        shapeRenderer.end();
     }
 
-    private Tile getTileUnderMouse() {
-        int mouseX = Gdx.input.getX();
-        int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY(); // LibGDX inverte o Y
-        int gridX = (mouseX - GRID_ORIGIN_X) / CELL_SIZE;
-        int gridY = (mouseY - GRID_ORIGIN_Y) / CELL_SIZE;
-        // Ajuste para o sistema de coordenadas do seu grid
-        gridY = gameContext.getGameController().getGrid().getHeight() - 1 - gridY;
-        return gameContext.getGameController().getGrid().getTile(gridX, gridY);
-    }
+//    private Tile getTileUnderMouse() {
+//        int mouseX = Gdx.input.getX();
+//        int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY(); // LibGDX inverte o Y
+//        int gridX = (mouseX - GRID_ORIGIN_X) / CELL_SIZE;
+//        int gridY = (mouseY - GRID_ORIGIN_Y) / CELL_SIZE;
+//        // Ajuste para o sistema de coordenadas do seu grid
+//        gridY = gameContext.getGameController().getGrid().getHeight() - 1 - gridY;
+//        return gameContext.getGameController().getGrid().getTile(gridX, gridY);
+//    }
 
     private void drawEntities() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (int x = 0; x < gameContext.getGameController().getGrid().getWidth(); x++) {
-            for (int y = 0; y < gameContext.getGameController().getGrid().getHeight(); y++) {
-                Tile cell = gameContext.getGameController().getGrid().getTile(x, y);
-                Entity occupant = cell.getOccupant();
-                if (occupant != null) {
-                    int drawY = GRID_ORIGIN_Y + (gameContext.getGameController().getGrid().getHeight() - 1 - y) * CELL_SIZE + 4;
-                    int drawX = GRID_ORIGIN_X + x * CELL_SIZE + 4;
-                    // Verifica o tipo de entidade e desenha apropriadamente
-                    if (occupant instanceof PlayerEntity) {
-                        PlayerEntity player = (PlayerEntity) occupant;
-                        if (!player.isAlive()) {
-                            shapeRenderer.setColor(Color.PURPLE);
-                        } else {
-                            shapeRenderer.setColor(Color.BLUE);
-                        }
-                    } else if (occupant instanceof EnemyEntity) {
-                        EnemyEntity enemy = (EnemyEntity) occupant;
-                        if (!enemy.isAlive()) {
-                            shapeRenderer.setColor(Color.BROWN);
-                        } else {
-                            shapeRenderer.setColor(Color.RED);
-                        }
-                    }
-                    shapeRenderer.rect(drawX, drawY, CELL_SIZE - 8, CELL_SIZE - 8);
-                    highlightCurrentPlayer(occupant, drawX, drawY);
-                    drawEntityHPBar(drawX, drawY, cell);
-                }
-            }
-        }
+//        for (int x = 0; x < gameContext.getGameController().getGrid().getWidth(); x++) {
+//            for (int y = 0; y < gameContext.getGameController().getGrid().getHeight(); y++) {
+//                Tile cell = gameContext.getGameController().getGrid().getTile(x, y);
+//                Entity occupant = cell.getOccupant();
+//                if (occupant != null) {
+//                    int drawY = GRID_ORIGIN_Y + (gameContext.getGameController().getGrid().getHeight() - 1 - y) * CELL_SIZE + 4;
+//                    int drawX = GRID_ORIGIN_X + x * CELL_SIZE + 4;
+//                    // Verifica o tipo de entidade e desenha apropriadamente
+//                    if (occupant instanceof PlayerEntity) {
+//                        PlayerEntity player = (PlayerEntity) occupant;
+//                        if (!player.isAlive()) {
+//                            shapeRenderer.setColor(Color.PURPLE);
+//                        } else {
+//                            shapeRenderer.setColor(Color.BLUE);
+//                        }
+//                    } else if (occupant instanceof EnemyEntity) {
+//                        EnemyEntity enemy = (EnemyEntity) occupant;
+//                        if (!enemy.isAlive()) {
+//                            shapeRenderer.setColor(Color.BROWN);
+//                        } else {
+//                            shapeRenderer.setColor(Color.RED);
+//                        }
+//                    }
+//                    shapeRenderer.rect(drawX, drawY, CELL_SIZE - 8, CELL_SIZE - 8);
+//                    highlightCurrentPlayer(occupant, drawX, drawY);
+//                    drawEntityHPBar(drawX, drawY, cell);
+//                }
+//            }
+//        }
         shapeRenderer.end();
     }
 
@@ -324,7 +324,7 @@ public class BattleScreen implements Screen, EventLogger {
     private void updateEntityMovement(float delta) {
         Entity current = gameContext.getGameController().getCurrentEntity();
         if (current != null && current.isMoving()) {
-            current.updateMovement(gameContext.getGameController().getGrid(), delta);
+//            current.updateMovement(gameContext.getGameController().getGrid(), delta);
         }
     }
 

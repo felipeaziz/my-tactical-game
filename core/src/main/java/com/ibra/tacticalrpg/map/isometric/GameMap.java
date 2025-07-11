@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.ibra.tacticalrpg.GameContext;
 import com.ibra.tacticalrpg.entities.EnemyEntity;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
@@ -168,5 +169,9 @@ public class GameMap {
 
     public LinkedList<Tile> getBaseTiles() {
         return base;
+    }
+
+    public List<Entity> getEntities() {
+        return entities;
     }
 }

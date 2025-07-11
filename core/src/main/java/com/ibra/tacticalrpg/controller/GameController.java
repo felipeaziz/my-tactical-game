@@ -3,15 +3,12 @@ package com.ibra.tacticalrpg.controller;
 import com.ibra.tacticalrpg.entities.EnemyEntity;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
-import com.ibra.tacticalrpg.job.Apprentice;
-import com.ibra.tacticalrpg.map.orthogonal.GameMap;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GameController {
     private static GameController instance;
-    private GameMap grid;
     private List<Entity> entities;
     private int currentEntityIndex = 0;
 
@@ -21,41 +18,20 @@ public class GameController {
 
     public GameController() {
         instance = this;
-        initializeGame();
+    }
+
+    public void setup(List<Entity> entityList) {
+        this.entities = entityList;
+        this.entities.sort((e1, e2) -> Integer.compare(e2.getStats().getSpeed(), e1.getStats().getSpeed()));
+        currentEntityIndex = 0;
     }
 
     public static GameController getInstance() {
         return instance;
     }
 
-    public void initializeGame() {
-        grid = new GameMap(10, 10);
-        entities = new ArrayList<>();
-        PlayerEntity player = new PlayerEntity("Hero", new Apprentice());
-        PlayerEntity player2 = new PlayerEntity("Companion", new Apprentice());
-        EnemyEntity enemy = new EnemyEntity("Enemy 1", new Apprentice());
-        EnemyEntity enemy2 = new EnemyEntity("Enemy 2", new Apprentice());
-        EnemyEntity enemy3 = new EnemyEntity("Enemy 3", new Apprentice());
-        entities.add(player);
-        entities.add(player2);
-        entities.add(enemy);
-        entities.add(enemy2);
-        entities.add(enemy3);
-        grid.getTile(1, 1).setOccupant(player);
-        grid.getTile(1, 2).setOccupant(player2);
-        grid.getTile(8, 8).setOccupant(enemy);
-        grid.getTile(8, 7).setOccupant(enemy2);
-        grid.getTile(8, 6).setOccupant(enemy3);
-        entities.sort((e1, e2) -> Integer.compare(e2.getStats().getSpeed(), e1.getStats().getSpeed()));
-        currentEntityIndex = 0;
-    }
-
-    public GameMap getGrid() {
-        return grid;
-    }
-
     public List<Entity> getEntities() {
-        return entities;
+        return Collections.unmodifiableList(entities);
     }
 
     public int getCurrentEntityIndex() {
@@ -77,7 +53,7 @@ public class GameController {
         currentEntityIndex++;
     }
 
-    public void resetTurn() {
+    public void resetTurns() {
         entities.forEach(Entity::resetTurn);
         currentEntityIndex = 0;
     }
@@ -86,7 +62,44 @@ public class GameController {
         return status;
     }
 
-    public void updateGameStatus() {
+    public GameStatus getGamestatus() {
+        return status;
+    }
+
+    public void handleTurns() {
+        updateGameStatus();
+        if (status != GameStatus.RUNNING) return;
+
+        Entity current = getCurrentEntity();
+        if (current == null || current.isTurnDone() || !current.isAlive()) {
+            advanceTurn();
+        } else {
+            current.takeTurn();
+        }
+    }
+
+    private void advanceTurn() {
+        do {
+            nextEntity();
+        } while (getCurrentEntity() != null && !getCurrentEntity().isAlive());
+
+        if (currentEntityIndex >= entities.size()) {
+            resetTurns();
+            advanceTurn();
+            return;
+        }
+
+        Entity current = getCurrentEntity();
+        current.takeTurn();
+
+        if (current.isTurnDone()) {
+            current.resetTurn();
+            current.getStats().updateEffects();
+            nextEntity();
+        }
+    }
+
+    private void updateGameStatus() {
         boolean playerAlive = entities.stream()
             .filter(e -> e instanceof PlayerEntity)
             .anyMatch(Entity::isAlive);
@@ -99,29 +112,6 @@ public class GameController {
             status = GameStatus.PLAYER_VICTORY;
         } else {
             status = GameStatus.RUNNING;
-        }
-    }
-
-    public void advanceTurn() {
-        while (getCurrentEntity() != null && !getCurrentEntity().isAlive()) {
-            nextEntity();
-        }
-        if (currentEntityIndex >= entities.size()) {
-            resetTurn();
-            setCurrentEntityIndex(0);
-            while (getCurrentEntity() != null && !getCurrentEntity().isAlive()) {
-                nextEntity();
-            }
-            if (currentEntityIndex >= entities.size()) return;
-        }
-        Entity current = getCurrentEntity();
-        current.takeTurn();
-        if (current.isTurnDone()) {
-            current.resetTurn();
-            nextEntity();
-            if (currentEntityIndex < entities.size()) {
-                getCurrentEntity().getStats().updateEffects();
-            }
         }
     }
 }
