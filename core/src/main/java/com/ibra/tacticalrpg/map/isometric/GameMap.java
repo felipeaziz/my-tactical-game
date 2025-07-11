@@ -5,11 +5,18 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.ibra.tacticalrpg.entities.EnemyEntity;
+import com.ibra.tacticalrpg.entities.Entity;
+import com.ibra.tacticalrpg.entities.PlayerEntity;
+import com.ibra.tacticalrpg.job.Apprentice;
 import com.ibra.tacticalrpg.map.TerrainType;
 
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.ibra.tacticalrpg.grid.IsometricGridUtils.byWorldY;
+import static com.ibra.tacticalrpg.grid.IsometricGridUtils.findEntityTile;
 
 public class GameMap {
     final float TILE_WIDTH = 64f;
@@ -22,22 +29,31 @@ public class GameMap {
     LinkedList<Tile> base;
     LinkedList<Tile> objects;
     LinkedList<Tile> visualEffects;
+    LinkedList<Entity> entities;
 
     public GameMap() {
         base = new LinkedList<>();
         objects = new LinkedList<>();
         visualEffects = new LinkedList<>();
+        entities = new LinkedList<>();
         shapeRenderer = new ShapeRenderer();
         fillMap(); // Fill the map with tiles
+        addEntities();
+    }
+
+    public void render(SpriteBatch batch, OrthographicCamera camera) {
+        renderBaseLayer(batch);
+        renderVisualEffectLayer(batch, camera);
+        renderObjectLayer(batch);
+        renderEntities(batch);
     }
 
     public void fillMap() {
         // Fill the map with tiles or entities
         for (int row = 9; row >= 0; row--) {
             for (int col = 9; col >= 0; col--) {
-                float x = (col - row) * (TILE_WIDTH / 2f); // Adjusted for isometric projection
-                float y = (col + row) * (TILE_HEIGHT / 2f); // Adjusted for isometric projection
-                // Create a tile with a specific terrain type based on its position
+                float x = calculateWorldPositionX(col, row); // Adjusted for isometric projection
+                float y = calculateWorldPositionY(col, row); // Adjusted for isometric projection
                 TerrainType terrainType = TerrainType.NORMAL; // Default terrain type
                 if(row == 3) {
                     terrainType = TerrainType.SNOW; // Example
@@ -50,26 +66,40 @@ public class GameMap {
                 } else if (row == 4) {
                     terrainType = TerrainType.SWAMP; // Example
                 }
-                Tile tile = new Tile(new Vector2(row, col), new Vector2(x, y), terrainType);
+                Tile tile = new Tile(new Vector2(col, row), new Vector2(x, y), terrainType);
                 base.add(tile);
                 visualEffects.add(tile); // Add to visual effects for hover detection
 
                 //Add some rocks and trees on object layer for testing
                 if(row == 0) {
-                    Tile objectTile = new Tile(new Vector2(row, col), new Vector2(x, y), TerrainType.TREE);
+                    Tile objectTile = new Tile(new Vector2(col, row), new Vector2(x, y), TerrainType.TREE);
                     objects.add(objectTile);
-                } else if ((row == 1 && col == 1) || (row == 8 && col == 8)) {
-                    Tile objectTile = new Tile(new Vector2(row, col), new Vector2(x, y), TerrainType.ROCK);
+                } else if ((row == 2 && col == 1) || (row == 8 && col == 9)) {
+                    Tile objectTile = new Tile(new Vector2(col, row), new Vector2(x, y), TerrainType.ROCK);
                     objects.add(objectTile);
                 }
             }
         }
     }
 
-    public void render(SpriteBatch batch, OrthographicCamera camera) {
-        renderBaseLayer(batch);
-        renderVisualEffectLayer(batch, camera);
-        renderObjectLayer(batch);
+    private void addEntities() {
+        Tile tile1 = getTile(2, 2);
+        Entity hero = new PlayerEntity("Hero", new Apprentice());
+        tile1.setOccupant(hero);
+        entities.add(hero);
+
+        Tile tile2 = getTile(9, 9);
+        Entity enemy = new EnemyEntity("Enemy", new Apprentice());
+        tile2.setOccupant(enemy);
+        entities.add(enemy);
+    }
+
+    private float calculateWorldPositionY(int col, int row) {
+        return (col + row) * (TILE_HEIGHT / 2f);
+    }
+
+    private float calculateWorldPositionX(int col, int row) {
+        return (col - row) * (TILE_WIDTH / 2f);
     }
 
     private void renderBaseLayer(SpriteBatch batch) {
@@ -106,16 +136,37 @@ public class GameMap {
         batch.end();
     }
 
-    public Tile getTileAt(Vector2 worldPosition) {
-        for (Tile tile : base) {
-            if (tile.getWorldPosition().equals(worldPosition)) {
-                return tile;
+    private void renderEntities(SpriteBatch batch) {
+        entities.sort(byWorldY(this));
+        batch.begin();
+        for (Entity entity : entities) {
+            Tile tile = findEntityTile(this, entity);
+            if (tile != null) {
+                entity.render(batch, tile.getWorldPosition());
             }
         }
-        return null;
+        batch.end();
+
+        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (Entity entity : entities) {
+            Tile tile = findEntityTile(this, entity);
+            if (tile != null) {
+                entity.renderStatusBars(shapeRenderer, tile.getWorldPosition());
+            }
+        }
+        shapeRenderer.end();
+
     }
 
-    public void selectTile(Tile tile) {
-        selectedTile = tile;
+    public Tile getTile(int row, int col) {
+        return base.stream()
+            .filter(tile -> tile.getGridPosition().x == col && tile.getGridPosition().y == row)
+            .findFirst()
+            .orElse(null);
+    }
+
+    public LinkedList<Tile> getBaseTiles() {
+        return base;
     }
 }

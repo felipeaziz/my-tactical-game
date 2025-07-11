@@ -1,6 +1,10 @@
 package com.ibra.tacticalrpg.entities;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.ibra.tacticalrpg.item.Item;
 import com.ibra.tacticalrpg.job.Job;
 import com.ibra.tacticalrpg.map.orthogonal.GameMap;
@@ -33,7 +37,42 @@ public abstract class Entity {
     }
 
     public abstract void takeTurn();
+
     public abstract Texture getTexture();
+
+    public void render(SpriteBatch batch, Vector2 worldPosition) {
+        batch.draw(getTexture(),
+            worldPosition.x - (getTexture().getWidth() / 2f),
+            worldPosition.y - 3,
+            getTexture().getWidth(),
+            getTexture().getHeight());
+    }
+
+    public void renderStatusBars(ShapeRenderer shapeRenderer, Vector2 worldPosition) {
+        float barWidth = 32f;
+        float barHeight = 4f;
+        float spacing = 2f;
+
+        float baseX = worldPosition.x - barWidth / 2f;
+        float baseY = worldPosition.y + getSpriteHeight() + 4f; // pode ajustar conforme o sprite
+
+        // HP
+        float hpRatio = (float) stats.getCurrentHp() / stats.getMaxHp();
+        shapeRenderer.setColor(Color.DARK_GRAY);
+        shapeRenderer.rect(baseX, baseY, barWidth, barHeight);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(baseX, baseY, barWidth * hpRatio, barHeight);
+
+        // MP
+        float mpRatio = (float) stats.getCurrentMp() / stats.getMaxMp();
+        shapeRenderer.setColor(Color.DARK_GRAY);
+        shapeRenderer.rect(baseX, baseY - (barHeight + spacing), barWidth, barHeight);
+        shapeRenderer.setColor(Color.BLUE);
+        shapeRenderer.rect(baseX, baseY - (barHeight + spacing), barWidth * mpRatio, barHeight);
+
+        shapeRenderer.setColor(Color.WHITE); // reset color
+    }
+
 
     public void levelUp() {
         level++;
@@ -57,7 +96,7 @@ public abstract class Entity {
                 reachable.add(current);
             }
             if (dist == this.stats.getMoveRange()) continue;
-            for (int[] d : new int[][]{{1,0},{-1,0},{0,1},{0,-1}}) {
+            for (int[] d : new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
                 Tile neighbor = grid.getTile(current.getX() + d[0], current.getY() + d[1]);
                 if (neighbor == null ||
                     neighbor.getTerrainType().isObstacle() ||
@@ -65,7 +104,7 @@ public abstract class Entity {
                     continue;
                 }
                 int totalCost = dist + neighbor.getTerrainType().getMovementCost();
-                if( totalCost > this.stats.getMoveRange()) {
+                if (totalCost > this.stats.getMoveRange()) {
                     continue; // Não ultrapassar o alcance de movimento
                 }
                 if (!distance.containsKey(neighbor) || totalCost < distance.get(neighbor)) {
@@ -115,7 +154,7 @@ public abstract class Entity {
                     current.setOccupant(null);
                 }
                 next.setOccupant(this);
-                if(!isMoving()) {
+                if (!isMoving()) {
                     next.applyEffect(this);
                 }
             }
@@ -163,5 +202,9 @@ public abstract class Entity {
     public void setMovePath(List<Tile> path) {
         this.movePath.clear();
         this.movePath.addAll(path);
+    }
+
+    protected int getSpriteHeight() {
+        return getTexture().getHeight();
     }
 }

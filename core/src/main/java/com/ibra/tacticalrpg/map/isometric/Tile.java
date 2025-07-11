@@ -13,13 +13,13 @@ import com.ibra.tacticalrpg.map.TerrainType;
 import com.ibra.tacticalrpg.map.terraineffect.TextureCache;
 
 public class Tile {
-    private Vector2 tileMapPosition;
-    private Vector2 worldPosition;
+    private final Vector2 gridPosition;
+    private final Vector2 worldPosition;
     private Entity occupant;
     private final TerrainType terrainType;
 
-    public Tile(Vector2 tileMapPosition, Vector2 worldPosition, TerrainType terrainType) {
-        this.tileMapPosition = tileMapPosition;
+    public Tile(Vector2 gridPosition, Vector2 worldPosition, TerrainType terrainType) {
+        this.gridPosition = gridPosition;
         this.worldPosition = worldPosition;
         this.terrainType = terrainType;
         this.occupant = null; // Default to not occupied
@@ -74,20 +74,12 @@ public class Tile {
         return (dx / 32f + dy / 16f) <= 1; // fórmula para losango isométrico
     }
 
-    public Vector2 getTileMapPosition() {
-        return tileMapPosition;
+    public Vector2 getGridPosition() {
+        return gridPosition;
     }
 
     public Vector2 getWorldPosition() {
         return worldPosition;
-    }
-
-    public void setTileMapPosition(Vector2 tileMapPosition) {
-        this.tileMapPosition = tileMapPosition;
-    }
-
-    public void setWorldPosition(Vector2 worldPosition) {
-        this.worldPosition = worldPosition;
     }
 
     public boolean isOccupied() {
