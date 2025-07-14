@@ -8,8 +8,8 @@ import com.ibra.tacticalrpg.action.MoveAction;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
 import com.ibra.tacticalrpg.grid.GridUtils;
-import com.ibra.tacticalrpg.map.orthogonal.GameMap;
-import com.ibra.tacticalrpg.map.orthogonal.Tile;
+import com.ibra.tacticalrpg.map.isometric.GameMap;
+import com.ibra.tacticalrpg.map.isometric.Tile;
 
 import java.util.HashSet;
 import java.util.List;

@@ -7,12 +7,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.ibra.tacticalrpg.item.Item;
 import com.ibra.tacticalrpg.job.Job;
-import com.ibra.tacticalrpg.map.orthogonal.GameMap;
-import com.ibra.tacticalrpg.map.orthogonal.Tile;
+import com.ibra.tacticalrpg.map.isometric.GameMap;
+import com.ibra.tacticalrpg.map.isometric.Tile;
 
 import java.util.*;
 
-import static com.ibra.tacticalrpg.grid.GridUtils.findEntityTile;
+import static com.ibra.tacticalrpg.grid.IsometricGridUtils.findEntityTile;
 
 public abstract class Entity {
     protected final String name;
@@ -97,7 +97,7 @@ public abstract class Entity {
             }
             if (dist == this.stats.getMoveRange()) continue;
             for (int[] d : new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
-                Tile neighbor = grid.getTile(current.getX() + d[0], current.getY() + d[1]);
+                Tile neighbor = grid.getTile(current.getGridPositionX() + d[0], current.getGridPositionY() + d[1]);
                 if (neighbor == null ||
                     neighbor.getTerrainType().isObstacle() ||
                     (neighbor.isOccupied() && neighbor.getOccupant() != this)) {
@@ -125,7 +125,7 @@ public abstract class Entity {
         for (int dx = -range; dx <= range; dx++) {
             for (int dy = -range; dy <= range; dy++) {
                 if (Math.abs(dx) + Math.abs(dy) <= range) {
-                    Tile cell = grid.getTile(start.getX() + dx, start.getY() + dy);
+                    Tile cell = grid.getTile(start.getGridPositionX() + dx, start.getGridPositionY() + dy);
                     if (cell != null && cell != start) {
                         attackable.add(cell);
                     }

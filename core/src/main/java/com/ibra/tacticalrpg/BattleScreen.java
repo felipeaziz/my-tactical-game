@@ -55,7 +55,7 @@ public class BattleScreen implements Screen, EventLogger {
 
     private void initializeGame() {
         this.eventLog = new EventLog(LOG_SIZE);
-        this.gameContext = new GameContext(new GameController(), new PlayerController(), this);
+        this.gameContext = new GameContext(new GameController(), new PlayerController(), null, this);
         turnState = TurnState.PLAYER;
         for (Entity ent : gameContext.getGameController().getEntities()) {
             if (ent instanceof PlayerEntity) {

@@ -1,9 +1,9 @@
 package com.ibra.tacticalrpg.action;
 
 import com.ibra.tacticalrpg.entities.Entity;
-import com.ibra.tacticalrpg.grid.GridUtils;
-import com.ibra.tacticalrpg.map.orthogonal.GameMap;
-import com.ibra.tacticalrpg.map.orthogonal.Tile;
+import com.ibra.tacticalrpg.grid.IsometricGridUtils;
+import com.ibra.tacticalrpg.map.isometric.GameMap;
+import com.ibra.tacticalrpg.map.isometric.Tile;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class MoveAction implements Action {
             return;
         }
 
-        List<Tile> path = GridUtils.findPath(gameMap, fromTile, toTile);
+        List<Tile> path = IsometricGridUtils.findPath(gameMap, fromTile, toTile);
         if (!path.isEmpty()) {
             actor.setMovePath(path);
         }

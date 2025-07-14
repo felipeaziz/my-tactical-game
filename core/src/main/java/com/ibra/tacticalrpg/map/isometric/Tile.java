@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.map.TerrainType;
+import com.ibra.tacticalrpg.map.terraineffect.TerrainEffect;
 import com.ibra.tacticalrpg.map.terraineffect.TextureCache;
 
 public class Tile {
@@ -76,6 +77,21 @@ public class Tile {
 
     public Vector2 getGridPosition() {
         return gridPosition;
+    }
+
+    public int getGridPositionX() {
+        return (int) gridPosition.x;
+    }
+
+    public int getGridPositionY() {
+        return (int) gridPosition.y;
+    }
+
+    public void applyEffect(Entity entity) {
+        TerrainEffect effect = terrainType.getEffect();
+        if (effect != null) {
+            effect.applyEffect(entity);
+        }
     }
 
     public Vector2 getWorldPosition() {

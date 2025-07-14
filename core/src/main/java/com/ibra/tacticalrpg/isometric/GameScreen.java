@@ -50,7 +50,7 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
 
     private void initializeGame() {
         this.eventLog = new EventLog(LOG_SIZE);
-        this.gameContext = new GameContext(new GameController(), new PlayerController(), this);
+        this.gameContext = new GameContext(new GameController(), new PlayerController(), this.map, this);
         GameController controller = new GameController();
         controller.setup(map.getEntities());
         turnState = TurnState.PLAYER;

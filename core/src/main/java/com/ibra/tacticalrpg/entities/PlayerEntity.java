@@ -31,7 +31,7 @@ public class PlayerEntity extends Entity {
         EventLogger logger = gameContext.getEventLogger();
 
         if (playerController != null && logger != null && gameController != null) {
-            playerController.handleInput(gameController.getGrid(), gameController.getEntities(), logger, this);
+            playerController.handleInput(gameContext.getGameMap(), gameController.getEntities(), logger, this);
         }
     }
 

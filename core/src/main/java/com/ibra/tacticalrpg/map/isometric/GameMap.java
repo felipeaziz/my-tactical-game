@@ -162,7 +162,7 @@ public class GameMap {
 
     public Tile getTile(int row, int col) {
         return base.stream()
-            .filter(tile -> tile.getGridPosition().x == col && tile.getGridPosition().y == row)
+            .filter(tile -> tile.getGridPositionX() == col && tile.getGridPositionY() == row)
             .findFirst()
             .orElse(null);
     }
