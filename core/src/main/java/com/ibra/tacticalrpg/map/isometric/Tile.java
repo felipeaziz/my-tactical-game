@@ -18,6 +18,8 @@ public class Tile {
     private final Vector2 worldPosition;
     private Entity occupant;
     private final TerrainType terrainType;
+    private boolean highlighted = false;
+
 
     public Tile(Vector2 gridPosition, Vector2 worldPosition, TerrainType terrainType) {
         this.gridPosition = gridPosition;
@@ -48,7 +50,10 @@ public class Tile {
         Vector2 worldMouse = new Vector2(worldMouse3D.x, worldMouse3D.y);
 
         boolean isHovered = isPointInsideDiamond(worldMouse);
-        if (isHovered) {
+        if (highlighted) {
+            shapeRenderer.setColor(Color.CYAN);
+            drawTileOutline(shapeRenderer);
+        } else if (isHovered) {
             shapeRenderer.setColor(Color.YELLOW);
             drawTileOutline(shapeRenderer);
         }
@@ -65,7 +70,7 @@ public class Tile {
         shapeRenderer.line(leftX, worldPosition.y, worldPosition.x, topY);
     }
 
-    private boolean isPointInsideDiamond(Vector2 point) {
+    public boolean isPointInsideDiamond(Vector2 point) {
         float centerX = worldPosition.x;
         float centerY = worldPosition.y;
 
@@ -112,5 +117,13 @@ public class Tile {
 
     public TerrainType getTerrainType() {
         return terrainType;
+    }
+
+    public boolean isHighlighted() {
+        return highlighted;
+    }
+
+    public void setHighlighted(boolean highlighted) {
+        this.highlighted = highlighted;
     }
 }

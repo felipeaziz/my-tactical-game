@@ -1,5 +1,7 @@
 package com.ibra.tacticalrpg;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.ibra.tacticalrpg.controller.CameraController;
 import com.ibra.tacticalrpg.controller.GameController;
 import com.ibra.tacticalrpg.controller.PlayerController;
 import com.ibra.tacticalrpg.controller.EventLogger;
@@ -10,10 +12,16 @@ public class GameContext {
     private final PlayerController playerController;
     private final EventLogger eventLogger;
     private final GameMap gameMap;
+    private final CameraController cameraController;
 
-    public GameContext(GameController gameController, PlayerController playerController, GameMap gameMap, EventLogger eventLogger) {
+    public GameContext(GameController gameController,
+                       PlayerController playerController,
+                       CameraController cameraController,
+                       GameMap gameMap,
+                       EventLogger eventLogger) {
         this.gameController = gameController;
         this.playerController = playerController;
+        this.cameraController = cameraController;
         this.gameMap = gameMap;
         this.eventLogger = eventLogger;
     }
@@ -24,12 +32,19 @@ public class GameContext {
     public PlayerController getPlayerController() {
         return playerController;
     }
+    public CameraController getCameraController() {
+        return cameraController;
+    }
     public EventLogger getEventLogger() {
         return eventLogger;
     }
 
     public GameMap getGameMap() {
         return gameMap;
+    }
+
+    public OrthographicCamera getCamera() {
+        return cameraController.getCamera();
     }
 }
 

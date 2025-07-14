@@ -81,19 +81,19 @@ public class GridUtils {
         return path;
     }
 
-    public static GameMap getGrid(Entity entity) {
-        GameMap map = findEntityMap(entity);
-        if (map == null) {
-            throw new IllegalStateException("Entity " + entity.getName() + " não está em nenhum mapa");
-        }
-        return map;
-    }
-
-    private static GameMap findEntityMap(Entity entity) {
-        GameMap map = GameController.getInstance().getGrid();
-        Tile tile = findEntityTile(map, entity);
-        return tile != null ? map : null;
-    }
+//    public static GameMap getGrid(Entity entity) {
+//        GameMap map = findEntityMap(entity);
+//        if (map == null) {
+//            throw new IllegalStateException("Entity " + entity.getName() + " não está em nenhum mapa");
+//        }
+//        return map;
+//    }
+//
+//    private static GameMap findEntityMap(Entity entity) {
+//        GameMap map = GameController.getInstance().getGrid();
+//        Tile tile = findEntityTile(map, entity);
+//        return tile != null ? map : null;
+//    }
 
     public static Tile findEntityTile(GameMap map, Entity entity) {
         for(int x = 0; x < map.getWidth(); x++) {

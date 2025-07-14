@@ -54,15 +54,15 @@ public class BattleScreen implements Screen, EventLogger {
     }
 
     private void initializeGame() {
-        this.eventLog = new EventLog(LOG_SIZE);
-        this.gameContext = new GameContext(new GameController(), new PlayerController(), null, this);
-        turnState = TurnState.PLAYER;
-        for (Entity ent : gameContext.getGameController().getEntities()) {
-            if (ent instanceof PlayerEntity) {
-                PlayerEntity player = (PlayerEntity) ent;
-                player.setGameContext(gameContext);
-            }
-        }
+//        this.eventLog = new EventLog(LOG_SIZE);
+//        this.gameContext = new GameContext(new GameController(), new PlayerController(), null, this);
+//        turnState = TurnState.PLAYER;
+//        for (Entity ent : gameContext.getGameController().getEntities()) {
+//            if (ent instanceof PlayerEntity) {
+//                PlayerEntity player = (PlayerEntity) ent;
+//                player.setGameContext(gameContext);
+//            }
+//        }
     }
 
     @Override
@@ -190,25 +190,25 @@ public class BattleScreen implements Screen, EventLogger {
 
     private void drawHighlightedCells() {
         // Highlights apenas para jogadores
-        if (gameContext.getGameController().getCurrentEntityIndex() < gameContext.getGameController().getEntities().size()
-            && gameContext.getGameController().getCurrentEntity() instanceof PlayerEntity) {
-            Set<Tile> highlights = gameContext.getPlayerController().getHighlightedCells();
-            Action currentAction = ((PlayerEntity) gameContext.getGameController().getCurrentEntity()).getCurrentAction();
-            if (highlights != null) {
-                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-                if (currentAction instanceof MoveAction) {
-                    shapeRenderer.setColor(1f, 1f, 0.6f, 0.4f);
-                } else if (currentAction instanceof AttackAction) {
-                    shapeRenderer.setColor(1f, 0.4f, 0.4f, 0.4f);
-                }
-//                for (Tile cell : highlights) {
-//                    int drawY = GRID_ORIGIN_Y + (gameContext.getGameController().getGrid().getHeight() - 1 - cell.getY()) * CELL_SIZE;
-//                    int drawX = GRID_ORIGIN_X + cell.getX() * CELL_SIZE;
-//                    shapeRenderer.rect(drawX, drawY, CELL_SIZE, CELL_SIZE);
+//        if (gameContext.getGameController().getCurrentEntityIndex() < gameContext.getGameController().getEntities().size()
+//            && gameContext.getGameController().getCurrentEntity() instanceof PlayerEntity) {
+//            Set<Tile> highlights = gameContext.getPlayerController().getHighlightedCells();
+//            Action currentAction = ((PlayerEntity) gameContext.getGameController().getCurrentEntity()).getCurrentAction();
+//            if (highlights != null) {
+//                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+//                if (currentAction instanceof MoveAction) {
+//                    shapeRenderer.setColor(1f, 1f, 0.6f, 0.4f);
+//                } else if (currentAction instanceof AttackAction) {
+//                    shapeRenderer.setColor(1f, 0.4f, 0.4f, 0.4f);
 //                }
-                shapeRenderer.end();
-            }
-        }
+////                for (Tile cell : highlights) {
+////                    int drawY = GRID_ORIGIN_Y + (gameContext.getGameController().getGrid().getHeight() - 1 - cell.getY()) * CELL_SIZE;
+////                    int drawX = GRID_ORIGIN_X + cell.getX() * CELL_SIZE;
+////                    shapeRenderer.rect(drawX, drawY, CELL_SIZE, CELL_SIZE);
+////                }
+//                shapeRenderer.end();
+//            }
+//        }
     }
 
     private void drawGridLines() {

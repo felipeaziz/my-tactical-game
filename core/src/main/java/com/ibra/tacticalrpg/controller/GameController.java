@@ -9,7 +9,7 @@ import java.util.List;
 
 public class GameController {
     private static GameController instance;
-    private List<Entity> entities;
+    private List<Entity> entities = Collections.emptyList();
     private int currentEntityIndex = 0;
 
     public enum GameStatus {RUNNING, PLAYER_DEFEAT, PLAYER_VICTORY}

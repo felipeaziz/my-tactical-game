@@ -42,4 +42,8 @@ public class CameraController extends InputAdapter {
         camera.zoom = zoom;
         return true;
     }
+
+    public OrthographicCamera getCamera() {
+        return camera;
+    }
 }

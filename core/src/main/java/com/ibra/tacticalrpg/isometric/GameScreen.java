@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.ibra.tacticalrpg.BattleScreen;
 import com.ibra.tacticalrpg.GameContext;
 import com.ibra.tacticalrpg.TacticalRPG;
 import com.ibra.tacticalrpg.controller.CameraController;
@@ -27,6 +26,8 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
     private final TacticalRPG game;
     private final OrthographicCamera camera;
     private final CameraController cameraController;
+    private final GameController gameController;
+    private final PlayerController playerController;
     private final GameMap map;
     private final GameUIRenderer uiRenderer;
     private final BitmapFont font;
@@ -41,6 +42,8 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.position.set(0, (9 + 9) * 32 / 4f, 0); // Start at the origin
         cameraController = new CameraController(camera);
+        gameController = new GameController();
+        playerController = new PlayerController();
         this.map = new GameMap();
 
         this.font = new BitmapFont();
@@ -50,9 +53,8 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
 
     private void initializeGame() {
         this.eventLog = new EventLog(LOG_SIZE);
-        this.gameContext = new GameContext(new GameController(), new PlayerController(), this.map, this);
-        GameController controller = new GameController();
-        controller.setup(map.getEntities());
+        this.gameContext = new GameContext(gameController, playerController, cameraController, this.map, this);
+        gameController.setup(map.getEntities());
         turnState = TurnState.PLAYER;
         for (Entity ent : gameContext.getGameController().getEntities()) {
             if (ent instanceof PlayerEntity) {

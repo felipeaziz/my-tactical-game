@@ -5,6 +5,7 @@ import com.ibra.tacticalrpg.GameContext;
 import com.ibra.tacticalrpg.action.Action;
 import com.ibra.tacticalrpg.controller.EventLogger;
 import com.ibra.tacticalrpg.controller.GameController;
+import com.ibra.tacticalrpg.controller.PlayerActionType;
 import com.ibra.tacticalrpg.controller.PlayerController;
 import com.ibra.tacticalrpg.job.Job;
 
@@ -13,6 +14,8 @@ public class PlayerEntity extends Entity {
     private Action currentAction = null;
     private boolean actionDone = false;
     private transient Texture texture;
+
+    private PlayerActionType currentActionType = PlayerActionType.NONE;
 
     public PlayerEntity(String name, Job job) {
         super(name, job);
@@ -31,7 +34,11 @@ public class PlayerEntity extends Entity {
         EventLogger logger = gameContext.getEventLogger();
 
         if (playerController != null && logger != null && gameController != null) {
-            playerController.handleInput(gameContext.getGameMap(), gameController.getEntities(), logger, this);
+            playerController.handleInput(gameContext.getGameMap(),
+                gameController.getEntities(),
+                logger,
+                this,
+                gameContext.getCamera());
         }
     }
 
@@ -70,5 +77,13 @@ public class PlayerEntity extends Entity {
             movedThisTurn = true;
             tookActionThisTurn = true;
         }
+    }
+
+    public PlayerActionType getCurrentActionType() {
+        return currentActionType;
+    }
+
+    public void setCurrentActionType(PlayerActionType currentActionType) {
+        this.currentActionType = currentActionType;
     }
 }
