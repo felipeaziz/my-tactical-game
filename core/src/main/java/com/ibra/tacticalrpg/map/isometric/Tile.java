@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.ibra.tacticalrpg.entities.Entity;
+import com.ibra.tacticalrpg.map.HighlightType;
 import com.ibra.tacticalrpg.map.TerrainType;
 import com.ibra.tacticalrpg.map.terraineffect.TerrainEffect;
 import com.ibra.tacticalrpg.map.terraineffect.TextureCache;
@@ -19,7 +20,7 @@ public class Tile {
     private Entity occupant;
     private final TerrainType terrainType;
     private boolean highlighted = false;
-
+    private HighlightType highlightType = HighlightType.NONE;
 
     public Tile(Vector2 gridPosition, Vector2 worldPosition, TerrainType terrainType) {
         this.gridPosition = gridPosition;
@@ -40,23 +41,40 @@ public class Tile {
     }
 
     public void renderOutline(ShapeRenderer shapeRenderer) {
+        shapeRenderer.setColor(Color.WHITE);
         drawTileOutline(shapeRenderer);
     }
 
-    public void renderVisualEffect(ShapeRenderer shapeRenderer, OrthographicCamera camera) {
-        // Detecta se o mouse está sobre esta tile
+    public void renderOutlineIfHovered(ShapeRenderer shapeRenderer, OrthographicCamera camera) {
         Vector3 screenMouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         Vector3 worldMouse3D = camera.unproject(screenMouse);
         Vector2 worldMouse = new Vector2(worldMouse3D.x, worldMouse3D.y);
 
-        boolean isHovered = isPointInsideDiamond(worldMouse);
-        if (highlighted) {
-            shapeRenderer.setColor(Color.CYAN);
-            drawTileOutline(shapeRenderer);
-        } else if (isHovered) {
+        if (isPointInsideDiamond(worldMouse)) {
             shapeRenderer.setColor(Color.YELLOW);
             drawTileOutline(shapeRenderer);
         }
+    }
+
+    public void renderHighlightFill(ShapeRenderer shapeRenderer) {
+        if (highlightType == HighlightType.NONE) return;
+
+        shapeRenderer.setColor(highlightType.getColor());
+
+        float halfWidth = 64f / 2f;
+        float halfHeight = 32f / 2f;
+        float x = worldPosition.x;
+        float y = worldPosition.y;
+        // Posição dos vértices do losango
+        float[] vertices = new float[]{
+            x, y + halfHeight,     // top
+            x + halfWidth, y,      // right
+            x, y - halfHeight,     // bottom
+            x - halfWidth, y       // left
+        };
+        // Preencher com 2 triângulos
+        shapeRenderer.triangle(vertices[0], vertices[1], vertices[2], vertices[3], vertices[4], vertices[5]);
+        shapeRenderer.triangle(vertices[0], vertices[1], vertices[4], vertices[5], vertices[6], vertices[7]);
     }
 
     private void drawTileOutline(ShapeRenderer shapeRenderer) {
@@ -125,5 +143,13 @@ public class Tile {
 
     public void setHighlighted(boolean highlighted) {
         this.highlighted = highlighted;
+    }
+
+    public HighlightType getHighlightType() {
+        return highlightType;
+    }
+
+    public void setHighlightType(HighlightType highlightType) {
+        this.highlightType = highlightType;
     }
 }
