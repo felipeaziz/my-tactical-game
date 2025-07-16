@@ -25,9 +25,6 @@ public class GameMap {
     final float TILE_HEIGHT = 32f;
     private final ShapeRenderer shapeRenderer;
 
-    private Tile selectedTile;
-    private List<Tile> highlightedTiles;
-
     LinkedList<Tile> base;
     LinkedList<Tile> objects;
     LinkedList<Tile> visualEffects;
@@ -165,11 +162,19 @@ public class GameMap {
 
     }
 
-    public Tile getTile(int row, int col) {
+    public Tile getTile(int x, int y) {
         return base.stream()
-            .filter(tile -> tile.getGridPositionX() == col && tile.getGridPositionY() == row)
+            .filter(tile -> tile.getGridPositionX() == x && tile.getGridPositionY() == y)
             .findFirst()
             .orElse(null);
+    }
+
+    public boolean isTileBlocked(int x, int y) {
+        Tile objectTile = objects.stream()
+            .filter(tile -> tile.getGridPositionX() == x && tile.getGridPositionY() == y)
+            .findFirst()
+            .orElse(null);
+        return objectTile != null && objectTile.getTerrainType().isObstacle();
     }
 
     public LinkedList<Tile> getBaseTiles() {

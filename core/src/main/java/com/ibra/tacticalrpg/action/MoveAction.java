@@ -35,7 +35,7 @@ public class MoveAction implements Action {
             System.out.println("Não é possível mover para um tile ocupado por uma entidade viva");
             return false;
         }
-        if (to.getTerrainType().isObstacle()) {
+        if (gameMap.isTileBlocked(to.getGridPositionX(), to.getGridPositionY())) {
             System.out.println("Não é possível mover sobre um obstáculo");
             return false;
         }

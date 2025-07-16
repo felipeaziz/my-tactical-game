@@ -56,11 +56,8 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
         this.gameContext = new GameContext(gameController, playerController, cameraController, this.map, this);
         gameController.setup(map.getEntities());
         turnState = TurnState.PLAYER;
-        for (Entity ent : gameContext.getGameController().getEntities()) {
-            if (ent instanceof PlayerEntity) {
-                PlayerEntity player = (PlayerEntity) ent;
-                player.setGameContext(gameContext);
-            }
+        for (Entity ent : map.getEntities()) {
+            ent.setGameContext(gameContext);
         }
     }
 
@@ -75,14 +72,35 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
         map.render(game.getBatch(), camera);
         //menu fixo e passando player temporário. futuramente o menu será renderizado ao lado do currentPlayer
         uiRenderer.renderActionMenu(game.getBatch(), camera, new PlayerEntity("menu", new Apprentice()));
-//        checkEndGame();
-//        updateEntityMovement(delta);
+        checkEndGame();
+        updateEntityMovement(delta);
         handleTurns();
+    }
+
+    private void updateEntityMovement(float delta) {
+        Entity current = gameContext.getGameController().getCurrentEntity();
+        if (current != null && current.isMoving()) {
+            current.updateMovement(this.map, delta);
+        }
     }
 
     private void handleTurns() {
         if (turnState == TurnState.GAME_OVER) return;
         gameContext.getGameController().handleTurns();
+    }
+
+    private void checkEndGame() {
+        if (turnState == TurnState.GAME_OVER) return;  // Se já está em GAME_OVER, não precisa verificar novamente
+
+        if (gameContext.getGameController().getGameStatus() == GameController.GameStatus.PLAYER_DEFEAT) {
+            turnState = TurnState.GAME_OVER;
+            eventLog.add("Você perdeu!");
+            eventLog.add("Pressione R para reiniciar.");
+        } else if (gameContext.getGameController().getGameStatus() == GameController.GameStatus.PLAYER_VICTORY) {
+            turnState = TurnState.GAME_OVER;
+            eventLog.add("Você venceu!");
+            eventLog.add("Pressione R para reiniciar.");
+        }
     }
 
     @Override

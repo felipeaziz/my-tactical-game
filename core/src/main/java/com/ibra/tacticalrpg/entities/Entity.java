@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.ibra.tacticalrpg.GameContext;
 import com.ibra.tacticalrpg.item.Item;
 import com.ibra.tacticalrpg.job.Job;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
@@ -21,11 +22,13 @@ public abstract class Entity {
     protected Job job;
     protected List<Item> inventory;
 
+    protected transient GameContext gameContext;
+
     protected boolean movedThisTurn = false;
     protected boolean tookActionThisTurn = false;  // mudando de actedThisTurn para tookActionThisTurn
 
     // Movimentação
-    protected List<Tile> movePath = new ArrayList<>();
+    protected Queue<Tile> movePath = new LinkedList<>();
     protected float moveProgress = 0f;
     protected static final float MOVE_SPEED = 6f;
 
@@ -99,7 +102,7 @@ public abstract class Entity {
             for (int[] d : new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
                 Tile neighbor = grid.getTile(current.getGridPositionX() + d[0], current.getGridPositionY() + d[1]);
                 if (neighbor == null ||
-                    neighbor.getTerrainType().isObstacle() ||
+                    grid.isTileBlocked(neighbor.getGridPositionX(), neighbor.getGridPositionY()) ||
                     (neighbor.isOccupied() && neighbor.getOccupant() != this)) {
                     continue;
                 }
@@ -135,17 +138,13 @@ public abstract class Entity {
         return attackable;
     }
 
-    public boolean isMoving() {
-        return !movePath.isEmpty();
-    }
-
     public void updateMovement(GameMap grid, float delta) {
         if (!movePath.isEmpty()) {
             moveProgress += delta * MOVE_SPEED;
             if (moveProgress >= 1f) {
                 moveProgress = 0f;
-                Tile next = movePath.remove(0);
-                if (next.getTerrainType().isObstacle()) {
+                Tile next = movePath.remove();
+                if (grid.isTileBlocked(next.getGridPositionX(), next.getGridPositionY())) {
                     movePath.clear();
                     return;
                 }
@@ -204,7 +203,19 @@ public abstract class Entity {
         this.movePath.addAll(path);
     }
 
+    public boolean isMoving() {
+        return !movePath.isEmpty();
+    }
+
     protected int getSpriteHeight() {
         return getTexture().getHeight();
+    }
+
+    public void setGameContext(GameContext gameContext) {
+        this.gameContext = gameContext;
+    }
+
+    public GameContext getGameContext() {
+        return gameContext;
     }
 }

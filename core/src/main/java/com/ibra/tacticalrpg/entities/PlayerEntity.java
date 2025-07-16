@@ -10,7 +10,6 @@ import com.ibra.tacticalrpg.controller.PlayerController;
 import com.ibra.tacticalrpg.job.Job;
 
 public class PlayerEntity extends Entity {
-    private transient GameContext gameContext;
     private Action currentAction = null;
     private boolean actionDone = false;
     private transient Texture texture;
@@ -20,10 +19,6 @@ public class PlayerEntity extends Entity {
     public PlayerEntity(String name, Job job) {
         super(name, job);
         this.texture = new Texture("job/player/" + job.getName().toLowerCase() + ".png");
-    }
-
-    public void setGameContext(GameContext gameContext) {
-        this.gameContext = gameContext;
     }
 
     @Override

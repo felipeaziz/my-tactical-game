@@ -54,15 +54,15 @@ public class GameController {
     }
 
     public void resetTurns() {
-        entities.forEach(Entity::resetTurn);
-        currentEntityIndex = 0;
+//        entities.forEach(Entity::resetTurn);
+//        currentEntityIndex = 0;
+        for (Entity entity : entities) {
+            entity.setMovedThisTurn(false);
+            entity.setActedThisTurn(false);
+        }
     }
 
     public GameStatus getGameStatus() {
-        return status;
-    }
-
-    public GameStatus getGamestatus() {
         return status;
     }
 
@@ -71,31 +71,35 @@ public class GameController {
         if (status != GameStatus.RUNNING) return;
 
         Entity current = getCurrentEntity();
-        if (current == null || current.isTurnDone() || !current.isAlive()) {
+
+        // Ignora entidade morta
+        if (current == null || !current.isAlive()) {
             advanceTurn();
-        } else {
+            return;
+        }
+
+        // Se ainda não agiu, permite agir
+        if (!current.isTurnDone()) {
             current.takeTurn();
+        }
+
+        // Se terminou de agir, avança para próxima entidade
+        if (current.isTurnDone()) {
+            current.resetTurn();
+            current.getStats().updateEffects();
+            advanceTurn();
         }
     }
 
     private void advanceTurn() {
         do {
-            nextEntity();
+            nextEntity(); // Avança para o próximo
         } while (getCurrentEntity() != null && !getCurrentEntity().isAlive());
 
+        // Reinicia a rodada quando chega ao final
         if (currentEntityIndex >= entities.size()) {
             resetTurns();
-            advanceTurn();
-            return;
-        }
-
-        Entity current = getCurrentEntity();
-        current.takeTurn();
-
-        if (current.isTurnDone()) {
-            current.resetTurn();
-            current.getStats().updateEffects();
-            nextEntity();
+            currentEntityIndex = 0;
         }
     }
 

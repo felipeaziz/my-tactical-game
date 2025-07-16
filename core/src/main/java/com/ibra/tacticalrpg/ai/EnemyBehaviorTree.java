@@ -29,7 +29,7 @@ public class EnemyBehaviorTree {
             if (!enemy.hasActed()) {
                 Entity target = findNearestPlayer(enemy);
                 if (target != null && canAttack(enemy, target)) {
-                    GameMap grid = IsometricGridUtils.getGrid(enemy);
+                    GameMap grid = enemy.getGameContext().getGameMap();
                     Tile targetTile = IsometricGridUtils.findEntityTile(grid, target);
                     AttackAction attack = new AttackAction(grid, targetTile);
                     attack.execute(enemy, target);
@@ -40,7 +40,7 @@ public class EnemyBehaviorTree {
         }
 
         private boolean canAttack(Entity attacker, Entity target) {
-            GameMap grid = IsometricGridUtils.getGrid(attacker);
+            GameMap grid = attacker.getGameContext().getGameMap();
             Set<Tile> attackableCells = attacker.getAttackableCells(grid);
             Tile targetTile = IsometricGridUtils.findEntityTile(grid, target);
             return targetTile != null && attackableCells.contains(targetTile);
@@ -62,7 +62,7 @@ public class EnemyBehaviorTree {
         }
 
         private void moveTowardsTarget(EnemyEntity enemy, Entity target) {
-            GameMap grid = IsometricGridUtils.getGrid(enemy);
+            GameMap grid = enemy.getGameContext().getGameMap();
             Tile targetTile = IsometricGridUtils.findEntityTile(grid, target);
             if (targetTile == null) return;
 
@@ -103,7 +103,7 @@ public class EnemyBehaviorTree {
             if (!enemy.hasActed()) {
                 Entity target = findNearestPlayer(enemy);
                 if (target != null && canAttack(enemy, target)) {
-                    GameMap grid = IsometricGridUtils.getGrid(enemy);
+                    GameMap grid = enemy.getGameContext().getGameMap();
                     Tile targetTile = IsometricGridUtils.findEntityTile(grid, target);
                     AttackAction attack = new AttackAction(grid, targetTile);
                     attack.execute(enemy, target);
@@ -114,7 +114,7 @@ public class EnemyBehaviorTree {
         }
 
         private boolean canAttack(Entity attacker, Entity target) {
-            GameMap grid = IsometricGridUtils.getGrid(attacker);
+            GameMap grid = attacker.getGameContext().getGameMap();
             Set<Tile> attackableCells = attacker.getAttackableCells(grid);
             Tile targetTile = IsometricGridUtils.findEntityTile(grid, target);
             return targetTile != null && attackableCells.contains(targetTile);
@@ -122,7 +122,7 @@ public class EnemyBehaviorTree {
     }
 
     private static Entity findNearestPlayer(Entity enemy) {
-        GameMap grid = IsometricGridUtils.getGrid(enemy);
+        GameMap grid = enemy.getGameContext().getGameMap();
         if (grid == null) return null;
 
         List<Entity> entities = grid.getEntities();

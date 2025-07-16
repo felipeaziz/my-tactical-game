@@ -152,4 +152,17 @@ public class Tile {
     public void setHighlightType(HighlightType highlightType) {
         this.highlightType = highlightType;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tile tile = (Tile) o;
+        return gridPosition.equals(tile.gridPosition);
+    }
+
+    @Override
+    public int hashCode() {
+        return gridPosition.hashCode();
+    }
 }
