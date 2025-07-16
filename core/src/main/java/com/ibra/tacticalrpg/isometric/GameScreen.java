@@ -34,7 +34,8 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
     private EventLog eventLog;
     private GameContext gameContext;
 
-    private enum TurnState { PLAYER, GAME_OVER }
+    private enum TurnState {PLAYER, GAME_OVER}
+
     private TurnState turnState = TurnState.PLAYER;
 
     public GameScreen(TacticalRPG game) {
@@ -71,10 +72,12 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
 
         map.render(game.getBatch(), camera);
         //menu fixo e passando player temporário. futuramente o menu será renderizado ao lado do currentPlayer
-        uiRenderer.renderActionMenu(game.getBatch(), camera, new PlayerEntity("menu", new Apprentice()));
         checkEndGame();
         updateEntityMovement(delta);
         handleTurns();
+
+        uiRenderer.renderActionMenu(game.getBatch(), new PlayerEntity("menu", new Apprentice()));
+        renderEventLog();
     }
 
     private void updateEntityMovement(float delta) {
@@ -103,6 +106,25 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
         }
     }
 
+    private void renderEventLog() {
+        float padding = 10f;
+        float lineHeight = 20f;
+        // Começa a desenhar com coordenadas de tela
+        game.getBatch().setProjectionMatrix(uiRenderer.getUiMatrix());
+        game.getBatch().begin();
+
+        float x = Gdx.graphics.getWidth() - 300f;  // 300px da borda direita da tela
+        float y = Gdx.graphics.getHeight() - padding;
+
+        int line = 0;
+        for (String msg : eventLog.getLog()) {
+            font.draw(game.getBatch(), msg, x, y - line * lineHeight);
+            line++;
+        }
+
+        game.getBatch().end();
+    }
+
     @Override
     public void dispose() {
         font.dispose();
@@ -111,6 +133,6 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
 
     @Override
     public void log(String message) {
-
+        eventLog.add(message);
     }
 }
