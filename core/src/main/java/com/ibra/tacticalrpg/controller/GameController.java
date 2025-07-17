@@ -11,6 +11,7 @@ public class GameController {
     private static GameController instance;
     private List<Entity> entities = Collections.emptyList();
     private int currentEntityIndex = 0;
+    private EventLogger logger;
 
     public enum GameStatus {RUNNING, PLAYER_DEFEAT, PLAYER_VICTORY}
 
@@ -23,6 +24,7 @@ public class GameController {
     public void setup(List<Entity> entityList) {
         this.entities = entityList;
         this.entities.sort((e1, e2) -> Integer.compare(e2.getStats().getSpeed(), e1.getStats().getSpeed()));
+        this.updateGameStatus();
         currentEntityIndex = 0;
     }
 
@@ -54,12 +56,7 @@ public class GameController {
     }
 
     public void resetTurns() {
-//        entities.forEach(Entity::resetTurn);
-//        currentEntityIndex = 0;
-        for (Entity entity : entities) {
-            entity.setMovedThisTurn(false);
-            entity.setActedThisTurn(false);
-        }
+        entities.forEach(Entity::resetTurn);
     }
 
     public GameStatus getGameStatus() {
@@ -71,21 +68,19 @@ public class GameController {
         if (status != GameStatus.RUNNING) return;
 
         Entity current = getCurrentEntity();
-
         // Ignora entidade morta
         if (current == null || !current.isAlive()) {
             advanceTurn();
             return;
         }
-
+        // Espera movimento terminar
+        if (current.isMoving()) {
+            return;
+        }
         // Se ainda não agiu, permite agir
         if (!current.isTurnDone()) {
             current.takeTurn();
-        }
-
-        // Se terminou de agir, avança para próxima entidade
-        if (current.isTurnDone()) {
-            current.resetTurn();
+        } else {
             current.getStats().updateEffects();
             advanceTurn();
         }
@@ -100,6 +95,10 @@ public class GameController {
         if (currentEntityIndex >= entities.size()) {
             resetTurns();
             currentEntityIndex = 0;
+        }
+        Entity current = getCurrentEntity();
+        if (current != null && current.isAlive() && logger != null) {
+            logger.log("É a vez de " + current.getName() + ".");
         }
     }
 
@@ -117,5 +116,9 @@ public class GameController {
         } else {
             status = GameStatus.RUNNING;
         }
+    }
+
+    public void setLogger(EventLogger logger) {
+        this.logger = logger;
     }
 }

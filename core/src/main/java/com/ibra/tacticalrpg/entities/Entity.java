@@ -139,7 +139,7 @@ public abstract class Entity {
     }
 
     public void updateMovement(GameMap grid, float delta) {
-        if (!movePath.isEmpty()) {
+        if (isMoving()) {
             moveProgress += delta * MOVE_SPEED;
             if (moveProgress >= 1f) {
                 moveProgress = 0f;
@@ -155,6 +155,7 @@ public abstract class Entity {
                 next.setOccupant(this);
                 if (!isMoving()) {
                     next.applyEffect(this);
+                    setMovedThisTurn(true);
                 }
             }
         }

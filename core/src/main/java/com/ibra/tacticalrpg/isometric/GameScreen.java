@@ -1,9 +1,11 @@
 package com.ibra.tacticalrpg.isometric;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.ibra.tacticalrpg.BattleScreen;
 import com.ibra.tacticalrpg.GameContext;
 import com.ibra.tacticalrpg.TacticalRPG;
 import com.ibra.tacticalrpg.controller.CameraController;
@@ -28,7 +30,7 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
     private final CameraController cameraController;
     private final GameController gameController;
     private final PlayerController playerController;
-    private final GameMap map;
+    private GameMap map;
     private final GameUIRenderer uiRenderer;
     private final BitmapFont font;
     private EventLog eventLog;
@@ -44,8 +46,8 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
         camera.position.set(0, (9 + 9) * 32 / 4f, 0); // Start at the origin
         cameraController = new CameraController(camera);
         gameController = new GameController();
+        gameController.setLogger(this);
         playerController = new PlayerController();
-        this.map = new GameMap();
 
         this.font = new BitmapFont();
         this.uiRenderer = new GameUIRenderer(font);
@@ -54,6 +56,7 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
 
     private void initializeGame() {
         this.eventLog = new EventLog(LOG_SIZE);
+        this.map = new GameMap();
         this.gameContext = new GameContext(gameController, playerController, cameraController, this.map, this);
         gameController.setup(map.getEntities());
         turnState = TurnState.PLAYER;
@@ -68,14 +71,17 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// Clear the screen
         game.getBatch().setProjectionMatrix(camera.combined);
 
+        if (turnState == TurnState.GAME_OVER && Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            this.initializeGame();
+        }
         cameraController.update();
 
         map.render(game.getBatch(), camera);
-        //menu fixo e passando player temporário. futuramente o menu será renderizado ao lado do currentPlayer
         checkEndGame();
         updateEntityMovement(delta);
         handleTurns();
 
+        //menu fixo e passando player temporário. futuramente o menu será renderizado ao lado do currentPlayer
         uiRenderer.renderActionMenu(game.getBatch(), new PlayerEntity("menu", new Apprentice()));
         renderEventLog();
     }

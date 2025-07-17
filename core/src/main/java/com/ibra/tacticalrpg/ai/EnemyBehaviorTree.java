@@ -75,7 +75,6 @@ public class EnemyBehaviorTree {
                     moveAction.execute(enemy, null);
                 }
             }
-            enemy.setMovedThisTurn(true);  // Marca que o inimigo se moveu
         }
 
         private Tile findBestMove(Set<Tile> movableCells, Tile targetTile) {

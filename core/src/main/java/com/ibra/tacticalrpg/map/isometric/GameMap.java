@@ -87,10 +87,20 @@ public class GameMap {
         tile1.setOccupant(hero);
         entities.add(hero);
 
-        Tile tile2 = getTile(9, 9);
+        Tile tile2 = getTile(3, 3);
+        Entity companion = new PlayerEntity("Companion", new Apprentice());
+        tile2.setOccupant(companion);
+        entities.add(companion);
+
+        Tile tile3 = getTile(8, 8);
         Entity enemy = new EnemyEntity("Enemy", new Apprentice());
-        tile2.setOccupant(enemy);
+        tile3.setOccupant(enemy);
         entities.add(enemy);
+
+        Tile tile4 = getTile(9, 9);
+        Entity enemy2 = new EnemyEntity("Enemy2", new Apprentice());
+        tile4.setOccupant(enemy2);
+        entities.add(enemy2);
     }
 
     private float calculateWorldPositionY(int col, int row) {
@@ -131,18 +141,20 @@ public class GameMap {
     }
 
     private void renderObjectLayer(SpriteBatch batch) {
-        objects.sort(Comparator.comparing(tile -> tile.getWorldPosition().y));
+        LinkedList<Tile> sorted = new LinkedList<>(objects);
+        sorted.sort(Comparator.comparing(tile -> tile.getWorldPosition().y));
         batch.begin();
-        for (Tile tile : objects) {
+        for (Tile tile : sorted) {
             tile.renderTexture(batch);
         }
         batch.end();
     }
 
     private void renderEntities(SpriteBatch batch) {
-        entities.sort(byWorldY(this));
+        LinkedList<Entity> sorted = new LinkedList<>(entities);
+        sorted.sort(byWorldY(this));
         batch.begin();
-        for (Entity entity : entities) {
+        for (Entity entity : sorted) {
             Tile tile = findEntityTile(this, entity);
             if (tile != null) {
                 entity.render(batch, tile.getWorldPosition());
@@ -152,7 +164,7 @@ public class GameMap {
 
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (Entity entity : entities) {
+        for (Entity entity : sorted) {
             Tile tile = findEntityTile(this, entity);
             if (tile != null) {
                 entity.renderStatusBars(shapeRenderer, tile.getWorldPosition());

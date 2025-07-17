@@ -22,7 +22,10 @@ public class PlayerController {
                             EventLogger logger,
                             PlayerEntity player,
                             OrthographicCamera camera) {
-        if (player.isActionDone()) return;
+        if (player.isActionDone() || player.isMoving()) return;
+        if (GameController.getInstance().getCurrentEntity() != player) {
+            return;
+        }
 
         // Input para seleção de ação
         if (!player.hasMoved() && Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
@@ -43,6 +46,8 @@ public class PlayerController {
             player.setCurrentAction(new AttackAction(grid, null));
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
             player.setActionDone(true);
+            player.setMovedThisTurn(true);
+            player.setActedThisTurn(true);
             player.setCurrentAction(null);
             player.setCurrentActionType(PlayerActionType.NONE);
             clearHighlights(grid);
@@ -108,7 +113,6 @@ public class PlayerController {
         MoveAction moveAction = new MoveAction(grid, fromTile, targetTile);
         player.setCurrentAction(moveAction);
         moveAction.execute(player, null);
-        player.setMovedThisTurn(true);
         logger.log("Você se moveu.");
     }
 

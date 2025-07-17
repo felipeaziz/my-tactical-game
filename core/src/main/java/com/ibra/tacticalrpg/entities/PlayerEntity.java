@@ -39,7 +39,7 @@ public class PlayerEntity extends Entity {
 
     @Override
     public boolean isTurnDone() {
-        return actionDone && !isMoving();
+        return actionDone && super.isTurnDone();
     }
 
     @Override
@@ -68,10 +68,6 @@ public class PlayerEntity extends Entity {
 
     public void setActionDone(boolean actionDone) {
         this.actionDone = actionDone;
-        if (actionDone) {
-            movedThisTurn = true;
-            tookActionThisTurn = true;
-        }
     }
 
     public PlayerActionType getCurrentActionType() {
