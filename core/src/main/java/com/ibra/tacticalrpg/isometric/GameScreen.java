@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.ibra.tacticalrpg.BattleScreen;
 import com.ibra.tacticalrpg.GameContext;
 import com.ibra.tacticalrpg.TacticalRPG;
 import com.ibra.tacticalrpg.controller.CameraController;

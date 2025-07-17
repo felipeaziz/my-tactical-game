@@ -1,7 +1,6 @@
 package com.ibra.tacticalrpg.map.isometric;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,17 +11,16 @@ import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
 import com.ibra.tacticalrpg.job.Apprentice;
 import com.ibra.tacticalrpg.map.TerrainType;
+import com.ibra.tacticalrpg.ui.RenderItem;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.ibra.tacticalrpg.grid.IsometricGridUtils.byWorldY;
-import static com.ibra.tacticalrpg.grid.IsometricGridUtils.findEntityTile;
+import static com.ibra.tacticalrpg.grid.IsometricGridUtils.*;
 
 public class GameMap {
-    final float TILE_WIDTH = 64f;
-    final float TILE_HEIGHT = 32f;
     private final ShapeRenderer shapeRenderer;
 
     LinkedList<Tile> base;
@@ -43,8 +41,29 @@ public class GameMap {
     public void render(SpriteBatch batch, OrthographicCamera camera) {
         renderBaseLayer(batch);
         renderVisualEffectLayer(batch, camera);
-        renderObjectLayer(batch);
-        renderEntities(batch);
+
+        renderObjectsAndEntities(batch);
+
+        renderStatusBars(batch);
+    }
+
+    private void renderObjectsAndEntities(SpriteBatch batch) {
+        List<RenderItem> renderQueue = new ArrayList<>();
+        objects.forEach(o -> renderQueue.add(new RenderItem(o.getWorldPosition().y,
+            () -> o.renderTexture(batch))));
+        entities.forEach(e -> {
+            Tile tile = findEntityTile(this, e);
+            if (tile != null) {
+                renderQueue.add(new RenderItem(tile.getWorldPosition().y,
+                    () -> e.render(batch, tile.getWorldPosition())));
+            }
+        });
+        renderQueue.sort(Comparator.comparingDouble(item -> -item.drawOrderY));
+        batch.begin();
+        for (RenderItem item : renderQueue) {
+            item.render.run();
+        }
+        batch.end();
     }
 
     public void fillMap() {
@@ -103,14 +122,6 @@ public class GameMap {
         entities.add(enemy2);
     }
 
-    private float calculateWorldPositionY(int col, int row) {
-        return (col + row) * (TILE_HEIGHT / 2f);
-    }
-
-    private float calculateWorldPositionX(int col, int row) {
-        return (col - row) * (TILE_WIDTH / 2f);
-    }
-
     private void renderBaseLayer(SpriteBatch batch) {
         batch.begin();
         for (Tile tile : base) {
@@ -140,28 +151,9 @@ public class GameMap {
         shapeRenderer.end();
     }
 
-    private void renderObjectLayer(SpriteBatch batch) {
-        LinkedList<Tile> sorted = new LinkedList<>(objects);
-        sorted.sort(Comparator.comparing(tile -> tile.getWorldPosition().y));
-        batch.begin();
-        for (Tile tile : sorted) {
-            tile.renderTexture(batch);
-        }
-        batch.end();
-    }
-
-    private void renderEntities(SpriteBatch batch) {
+    private void renderStatusBars(SpriteBatch batch) {
         LinkedList<Entity> sorted = new LinkedList<>(entities);
         sorted.sort(byWorldY(this));
-        batch.begin();
-        for (Entity entity : sorted) {
-            Tile tile = findEntityTile(this, entity);
-            if (tile != null) {
-                entity.render(batch, tile.getWorldPosition());
-            }
-        }
-        batch.end();
-
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (Entity entity : sorted) {

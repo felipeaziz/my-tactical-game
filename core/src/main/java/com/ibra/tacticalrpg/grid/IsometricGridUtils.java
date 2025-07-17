@@ -7,6 +7,25 @@ import com.ibra.tacticalrpg.map.isometric.Tile;
 import java.util.*;
 
 public class IsometricGridUtils {
+    private static final float TILE_WIDTH = 64f;
+    private static final float TILE_HEIGHT = 32f;
+
+    public static float getTileWidth() {
+        return TILE_WIDTH;
+    }
+
+    public static float getTileHeight() {
+        return TILE_HEIGHT;
+    }
+
+    /**
+     * Finds a path from start to end using the A* algorithm.
+     *
+     * @param grid The game map containing the tiles.
+     * @param start The starting tile.
+     * @param end The ending tile.
+     * @return A list of tiles representing the path, or an empty list if no path is found.
+     */
     public static List<Tile> findPath(GameMap grid, Tile start, Tile end) {
         if (start == null || end == null) return Collections.emptyList();
 
@@ -97,5 +116,13 @@ public class IsometricGridUtils {
             Tile tile = findEntityTile(map, entity);
             return tile != null ? tile.getWorldPosition().y : 0;
         });
+    }
+
+    public static float calculateWorldPositionY(int col, int row) {
+        return (col + row) * (TILE_HEIGHT / 2f);
+    }
+
+    public static float calculateWorldPositionX(int col, int row) {
+        return (col - row) * (TILE_WIDTH / 2f);
     }
 }

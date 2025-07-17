@@ -40,10 +40,6 @@ public class GameController {
         return currentEntityIndex;
     }
 
-    public void setCurrentEntityIndex(int idx) {
-        this.currentEntityIndex = idx;
-    }
-
     public Entity getCurrentEntity() {
         if (currentEntityIndex < entities.size()) {
             return entities.get(currentEntityIndex);
