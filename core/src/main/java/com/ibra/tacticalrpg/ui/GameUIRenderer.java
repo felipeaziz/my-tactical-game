@@ -3,10 +3,12 @@ package com.ibra.tacticalrpg.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
+import com.ibra.tacticalrpg.map.isometric.GameMap;
 
 public class GameUIRenderer {
     private final BitmapFont font;
@@ -18,39 +20,48 @@ public class GameUIRenderer {
         this.shapeRenderer = new ShapeRenderer();
     }
 
-    public void renderActionMenu(SpriteBatch batch, PlayerEntity player) {
-        shapeRenderer.setProjectionMatrix(getUiMatrix());
-        batch.setProjectionMatrix(getUiMatrix());
+    public void renderActionMenu(SpriteBatch batch, GameMap map, PlayerEntity player) {
+        float padding = 6f;
+        float lineHeight = 20;
+        String[] options = {"1 - Mover", "2 - Atacar", "3 - Fim do Turno"};
 
-        float menuWidth = 180f;
-        float menuHeight = 70f;
+        // Medir o maior texto para definir largura da caixa
+        GlyphLayout layout = new GlyphLayout();
+        float maxWidth = 0f;
+        for (String option : options) {
+            layout.setText(font, option);
+            if (layout.width > maxWidth) {
+                maxWidth = layout.width;
+            }
+        }
 
-        float screenWidth = Gdx.graphics.getWidth();
-        float menuX = screenWidth - menuWidth - 20f;
-        float menuY = 20f;
+        float boxWidth = maxWidth + 2 * padding;
+        float boxHeight = options.length * lineHeight + padding * 2;
 
-        // Fundo do menu
+        // Posição fixa no canto inferior esquerdo
+        float boxX = 20f;
+        float boxY = boxHeight + 20f;
+        Matrix4 uiMatrix = getUiMatrix();
+        shapeRenderer.setProjectionMatrix(uiMatrix);
+        batch.setProjectionMatrix(uiMatrix);
+        // Desenhar fundo
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(new Color(0f, 0f, 0f, 0.7f));
-        shapeRenderer.rect(menuX, menuY, menuWidth, menuHeight);
+        shapeRenderer.setColor(new Color(0f, 0f, 0f, 0.7f)); // fundo escuro
+        shapeRenderer.rect(boxX, boxY - boxHeight, boxWidth, boxHeight);
         shapeRenderer.end();
-
-        // Contorno
+        // Desenhar borda
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.rect(menuX, menuY, menuWidth, menuHeight);
+        shapeRenderer.setColor(Color.WHITE); // borda branca
+        shapeRenderer.rect(boxX, boxY - boxHeight, boxWidth, boxHeight);
         shapeRenderer.end();
-
-        // Texto
+        // Desenhar as opções
         batch.begin();
-        font.setColor(Color.WHITE);
-        if (!player.hasMoved()) {
-            font.draw(batch, "[1] Mover", menuX + 10, menuY + menuHeight - 10);
+        float verticalOffset = 14f;
+        float y = boxY - padding + verticalOffset;
+        for (String option : options) {
+            y -= lineHeight;
+            font.draw(batch, option, boxX + padding, y);
         }
-        if (!player.hasActed()) {
-            font.draw(batch, "[2] Atacar", menuX + 10, menuY + menuHeight - 30);
-        }
-        font.draw(batch, "[3] Encerrar turno", menuX + 10, menuY + menuHeight - 50);
         batch.end();
     }
 

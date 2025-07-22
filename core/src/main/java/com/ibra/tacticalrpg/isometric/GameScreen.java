@@ -13,7 +13,6 @@ import com.ibra.tacticalrpg.controller.GameController;
 import com.ibra.tacticalrpg.controller.PlayerController;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
-import com.ibra.tacticalrpg.job.Apprentice;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.ui.EventLog;
 import com.ibra.tacticalrpg.ui.GameUIRenderer;
@@ -73,15 +72,18 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
         if (turnState == TurnState.GAME_OVER && Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             this.initializeGame();
         }
-        cameraController.update();
+        cameraController.update(delta);
 
         map.render(game.getBatch(), camera);
         checkEndGame();
         updateEntityMovement(delta);
         handleTurns();
 
-        //menu fixo e passando player temporário. futuramente o menu será renderizado ao lado do currentPlayer
-        uiRenderer.renderActionMenu(game.getBatch(), new PlayerEntity("menu", new Apprentice()));
+        Entity currentPlayer = gameController.getCurrentEntity();
+        if(cameraController.isCameraStable() && currentPlayer instanceof PlayerEntity && !currentPlayer.isMoving()) {
+            PlayerEntity player = (PlayerEntity) currentPlayer;
+            uiRenderer.renderActionMenu(game.getBatch(), map, player);
+        }
         renderEventLog();
     }
 

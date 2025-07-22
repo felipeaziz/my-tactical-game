@@ -1,5 +1,6 @@
 package com.ibra.tacticalrpg.grid;
 
+import com.badlogic.gdx.math.Vector2;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
@@ -116,6 +117,12 @@ public class IsometricGridUtils {
             Tile tile = findEntityTile(map, entity);
             return tile != null ? tile.getWorldPosition().y : 0;
         });
+    }
+
+    public static Vector2 worldToScreenIso(int gridX, int gridY) {
+        float screenX = calculateWorldPositionX(gridX, gridY);
+        float screenY = calculateWorldPositionY(gridX, gridY);
+        return new Vector2(screenX, screenY);
     }
 
     public static float calculateWorldPositionY(int col, int row) {

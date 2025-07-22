@@ -10,14 +10,33 @@ public class CameraController extends InputAdapter {
     private final OrthographicCamera camera;
     private float zoom = 1f;
 
+    private float previousX, previousY, previousZoom;
+    private float stableTimer = 0f;
+
     public CameraController(OrthographicCamera camera) {
         this.camera = camera;
         Gdx.input.setInputProcessor(this); // Captura eventos do mouse (scroll)
     }
 
-    public void update() {
+    public void update(float delta) {
         handleKeyboardInput();
         camera.update();
+
+        float dx = Math.abs(camera.position.x - previousX);
+        float dy = Math.abs(camera.position.y - previousY);
+        float dz = Math.abs(camera.zoom - previousZoom);
+
+        boolean isMoving = dx > 0.5f || dy > 0.5f || dz > 0.01f;
+
+        if (isMoving) {
+            stableTimer = 0;
+        } else {
+            stableTimer += delta;
+        }
+
+        previousX = camera.position.x;
+        previousY = camera.position.y;
+        previousZoom = camera.zoom;
     }
 
     private void handleKeyboardInput() {
@@ -45,5 +64,9 @@ public class CameraController extends InputAdapter {
 
     public OrthographicCamera getCamera() {
         return camera;
+    }
+
+    public boolean isCameraStable() {
+        return stableTimer > 0.25f; // só estável se parada por mais de 250ms
     }
 }
