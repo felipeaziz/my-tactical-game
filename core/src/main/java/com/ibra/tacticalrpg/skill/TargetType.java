@@ -4,6 +4,7 @@ public enum TargetType {
     SELF,
     ALLY,
     ENEMY,
+    ANY,
     AREA,
     ALL_ALLIES,
     ALL_ENEMIES,

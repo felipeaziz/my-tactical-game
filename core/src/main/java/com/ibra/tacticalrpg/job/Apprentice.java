@@ -19,6 +19,7 @@ public class Apprentice extends Job {
     @Override
     public void applyInitialSkills(EntityStats stats) {
         this.skills.add(new Skill("Watch", "Spend your turn watching and learning.",
-            TargetType.NONE, null));
+            TargetType.SELF, null));
+        // TODO - when using this skill, the entity should gain a small amount of experience or insight, but not take any action.
     }
 }

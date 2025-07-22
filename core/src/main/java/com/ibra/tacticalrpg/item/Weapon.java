@@ -1,7 +1,8 @@
 package com.ibra.tacticalrpg.item;
 
+import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.EntityStats;
-
+//TODO - maybe a weapon should not be an item.
 public class Weapon extends Item {
     private final int attackPower;
     private final int range;
@@ -21,7 +22,7 @@ public class Weapon extends Item {
     }
 
     @Override
-    public void applyEffects(EntityStats stats) {
+    public void use(EntityStats stats, Entity target) {
         stats.setAttack(attackPower);
         stats.setAttackRange(range);
     }

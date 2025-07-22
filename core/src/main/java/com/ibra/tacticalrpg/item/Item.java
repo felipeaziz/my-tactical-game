@@ -1,5 +1,6 @@
 package com.ibra.tacticalrpg.item;
 
+import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.EntityStats;
 
 public abstract class Item {
@@ -19,13 +20,13 @@ public abstract class Item {
         return description;
     }
 
-    public abstract void applyEffects(EntityStats stats);
+    public abstract void use(EntityStats stats, Entity target);
 
     @Override
     public String toString() {
         return "Item{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+            "name='" + name + '\'' +
+            ", description='" + description + '\'' +
+            '}';
     }
 }
