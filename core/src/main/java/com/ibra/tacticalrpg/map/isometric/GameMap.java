@@ -10,6 +10,7 @@ import com.ibra.tacticalrpg.entities.EnemyEntity;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
 import com.ibra.tacticalrpg.job.Apprentice;
+import com.ibra.tacticalrpg.job.Carrier;
 import com.ibra.tacticalrpg.map.TerrainType;
 import com.ibra.tacticalrpg.ui.RenderItem;
 
@@ -107,17 +108,17 @@ public class GameMap {
         entities.add(hero);
 
         Tile tile2 = getTile(3, 3);
-        Entity companion = new PlayerEntity("Companion", new Apprentice());
+        Entity companion = new PlayerEntity("Companion", new Carrier());
         tile2.setOccupant(companion);
         entities.add(companion);
 
         Tile tile3 = getTile(8, 8);
-        Entity enemy = new EnemyEntity("Enemy", new Apprentice());
+        Entity enemy = new EnemyEntity("Enemy Apprentice", new Apprentice());
         tile3.setOccupant(enemy);
         entities.add(enemy);
 
         Tile tile4 = getTile(9, 9);
-        Entity enemy2 = new EnemyEntity("Enemy2", new Apprentice());
+        Entity enemy2 = new EnemyEntity("Enemy Carrier", new Carrier());
         tile4.setOccupant(enemy2);
         entities.add(enemy2);
     }

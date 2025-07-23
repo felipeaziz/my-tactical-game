@@ -13,7 +13,7 @@ public class Apprentice extends Job {
 
     @Override
     public EntityStats applyInitialStats() {
-        return new EntityStats(10, 2, 0, 5, 4, 1, 3);
+        return new EntityStats(10, 1, 0, 3, 4, 1, 3);
     }
 
     @Override
