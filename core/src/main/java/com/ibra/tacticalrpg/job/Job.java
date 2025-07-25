@@ -1,6 +1,9 @@
 package com.ibra.tacticalrpg.job;
 
 import com.ibra.tacticalrpg.entities.EntityStats;
+import com.ibra.tacticalrpg.item.Item;
+import com.ibra.tacticalrpg.item.equipment.Equipment;
+import com.ibra.tacticalrpg.item.equipment.EquipmentSlot;
 import com.ibra.tacticalrpg.skill.Skill;
 
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ public abstract class Job {
     protected final String name;
     protected final String description;
     protected List<Skill> skills;
+    protected EntityStats levelUpBonus;
+    protected List<EquipmentSlot> allowedEquipmentSlots;
 
     public Job(String name, String description) {
         this.name = name;
@@ -35,6 +40,29 @@ public abstract class Job {
         }
     }
 
+    public List<EquipmentSlot> getAllowedEquipmentSlots() {
+        return allowedEquipmentSlots;
+    }
+
+    public void setAllowedEquipmentSlots(List<EquipmentSlot> allowedEquipmentSlots) {
+        this.allowedEquipmentSlots = allowedEquipmentSlots;
+    }
+
+    public EntityStats getLevelUpBonus() {
+        return levelUpBonus;
+    }
+
+    public void setLevelUpBonus(EntityStats levelUpBonus) {
+        this.levelUpBonus = levelUpBonus;
+    }
+
+    public boolean canEquip(Item item) {
+        if (!(item instanceof Equipment)) return false;
+        Equipment equipment = (Equipment) item;
+        return allowedEquipmentSlots.contains(equipment.getSlot());
+    }
+
     public abstract EntityStats applyInitialStats();
+
     public abstract void applyInitialSkills(EntityStats stats);
 }

@@ -1,14 +1,19 @@
 package com.ibra.tacticalrpg.job;
 
 import com.ibra.tacticalrpg.entities.EntityStats;
+import com.ibra.tacticalrpg.item.equipment.EquipmentSlot;
 import com.ibra.tacticalrpg.skill.Skill;
 import com.ibra.tacticalrpg.skill.TargetType;
+
+import java.util.List;
 
 public class Apprentice extends Job {
 
     public Apprentice() {
         super("Apprentice",
             "A starting job for all adventures. The foundation of many advanced classes.");
+        levelUpBonus = new EntityStats(2, 0, 0, 1, 0, 0, 0);
+        allowedEquipmentSlots = List.of(EquipmentSlot.WEAPON, EquipmentSlot.BOOTS, EquipmentSlot.ACCESSORY_1);
     }
 
     @Override

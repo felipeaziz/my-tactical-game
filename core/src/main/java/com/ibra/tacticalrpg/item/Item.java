@@ -1,15 +1,17 @@
 package com.ibra.tacticalrpg.item;
 
-import com.ibra.tacticalrpg.entities.Entity;
-import com.ibra.tacticalrpg.entities.EntityStats;
-
 public abstract class Item {
+    public static final int MAX_ITEM_STACK = 99;
+
     protected final String name;
     protected final String description;
+    protected final ItemType type;
+    protected int value;
 
-    public Item(String name, String description) {
+    public Item(String name, String description, ItemType type) {
         this.name = name;
         this.description = description;
+        this.type = type;
     }
 
     public String getName() {
@@ -20,7 +22,9 @@ public abstract class Item {
         return description;
     }
 
-    public abstract void use(EntityStats stats, Entity target);
+    public ItemType getType() {
+        return type;
+    }
 
     @Override
     public String toString() {

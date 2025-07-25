@@ -1,6 +1,7 @@
 package com.ibra.tacticalrpg.entities;
 
 import com.ibra.tacticalrpg.entities.statuseffect.StatusEffect;
+import com.ibra.tacticalrpg.inventory.PersonalInventory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +16,7 @@ public class EntityStats {
     private int moveRange;
     private int attackRange;
     private int speed;
-    private Set<StatusEffect> activeStatus;
+    private Set<StatusEffect> activeEffects;
 
     public EntityStats(int maxHp, int attack, int defense, int maxMp, int moveRange, int attackRange, int speed) {
         this.maxHp = Math.max(1, maxHp);
@@ -27,26 +28,26 @@ public class EntityStats {
         this.moveRange = moveRange;
         this.attackRange = attackRange;
         this.speed = speed;
-        this.activeStatus = new HashSet<>();
+        this.activeEffects = new HashSet<>();
     }
 
     public void applyStatusEffect(StatusEffect effect) {
-        activeStatus.add(effect);
+        activeEffects.add(effect);
     }
 
     public void removeStatus(StatusEffect effect) {
-        activeStatus.remove(effect);
+        activeEffects.remove(effect);
         System.out.println("Status effect removed: " + effect.getClass().getSimpleName());
     }
 
-    public Set<StatusEffect> getActiveStatus() {
-        return new HashSet<>(activeStatus);
+    public Set<StatusEffect> getActiveEffects() {
+        return new HashSet<>(activeEffects);
     }
 
     public void updateEffects() {
-        activeStatus.forEach(effect -> {
+        activeEffects.forEach(effect -> {
             effect.update();
-            if(effect.isExpired()) {
+            if (effect.isExpired()) {
                 System.out.println("Status effect expired: " + effect.getClass().getSimpleName());
                 removeStatus(effect);
             } else {
@@ -127,5 +128,37 @@ public class EntityStats {
 
     public void setSpeed(int speed) {
         this.speed = Math.max(1, speed);
+    }
+
+    public int getFinalAttack(PersonalInventory inventory) {
+        int baseAttack = this.attack;
+        baseAttack += inventory.getEquipmentBonus("attack");
+        baseAttack += getStatusEffectModifier("attack");
+        return baseAttack;
+    }
+
+    public int getFinalDefense(PersonalInventory inventory) {
+        int baseDefense = this.defense;
+        baseDefense += inventory.getEquipmentBonus("defense");
+        baseDefense += getStatusEffectModifier("defense");
+        return baseDefense;
+    }
+
+    private int getStatusEffectModifier(String stat) {
+        //TODO - arrumar isso
+        return 0;
+//        return activeEffects.stream().mapToInt(effect -> effect.getStatModifier(stat)).sum();
+    }
+
+    public void applyLevelUpBonus(EntityStats bonus) {
+        this.maxHp += bonus.getMaxHp();
+        this.currentHp = Math.min(this.currentHp + bonus.getCurrentHp(), this.maxHp);
+        this.maxMp += bonus.getMaxMp();
+        this.currentMp = Math.min(this.currentMp + bonus.getCurrentMp(), this.maxMp);
+        this.attack += bonus.getAttack();
+        this.defense += bonus.getDefense();
+        this.moveRange += bonus.getMoveRange();
+        this.attackRange += bonus.getAttackRange();
+        this.speed += bonus.getSpeed();
     }
 }

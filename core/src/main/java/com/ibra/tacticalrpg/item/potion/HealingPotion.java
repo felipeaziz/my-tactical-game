@@ -1,12 +1,10 @@
 package com.ibra.tacticalrpg.item.potion;
 
 import com.ibra.tacticalrpg.entities.Entity;
-import com.ibra.tacticalrpg.entities.EntityStats;
-import com.ibra.tacticalrpg.item.Item;
 
-public class HealingPotion extends Item {
+public class HealingPotion extends ConsumableItem {
 
-    private int healingAmount;
+    private final int healingAmount;
 
     public HealingPotion() {
         super("Healing Potion", "Restores 5 HP to an ally.");
@@ -14,7 +12,7 @@ public class HealingPotion extends Item {
     }
 
     @Override
-    public void use(EntityStats stats, Entity target) {
+    public void use(Entity target) {
         int currentHp = target.getStats().getCurrentHp();
         target.getStats().setCurrentHp(currentHp + healingAmount);
         System.out.println("Used Healing Potion on "

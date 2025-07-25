@@ -4,11 +4,17 @@ import com.ibra.tacticalrpg.entities.EntityStats;
 import com.ibra.tacticalrpg.skill.Skill;
 import com.ibra.tacticalrpg.skill.TargetType;
 
+import java.util.List;
+
+import static com.ibra.tacticalrpg.item.equipment.EquipmentSlot.*;
+
 public class Carrier extends Job {
 
     public Carrier() {
         super("Carrier",
             "A utility-oriented class specialized in carrying and using items effectively.");
+        this.levelUpBonus = new EntityStats(1, 0, 0, 2, 0, 0, 0);
+        this.allowedEquipmentSlots = List.of(WEAPON, BOOTS, ACCESSORY_1);
     }
 
     @Override

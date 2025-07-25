@@ -6,7 +6,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.ibra.tacticalrpg.GameContext;
-import com.ibra.tacticalrpg.item.Item;
+import com.ibra.tacticalrpg.inventory.PersonalInventory;
+import com.ibra.tacticalrpg.job.Carrier;
 import com.ibra.tacticalrpg.job.Job;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
@@ -18,14 +19,15 @@ import static com.ibra.tacticalrpg.grid.IsometricGridUtils.findEntityTile;
 public abstract class Entity {
     protected final String name;
     protected int level = 1;
+    protected int experience;
     protected EntityStats stats;
     protected Job job;
-    protected List<Item> inventory;
+    protected PersonalInventory personalInventory;
 
     protected transient GameContext gameContext;
 
     protected boolean movedThisTurn = false;
-    protected boolean tookActionThisTurn = false;  // mudando de actedThisTurn para tookActionThisTurn
+    protected boolean tookActionThisTurn = false;
 
     // Movimentação
     protected Queue<Tile> movePath = new LinkedList<>();
@@ -36,7 +38,6 @@ public abstract class Entity {
         this.name = name;
         this.job = job;
         this.stats = job.applyInitialStats();
-        this.inventory = new ArrayList<>();
     }
 
     public abstract void takeTurn();
@@ -79,9 +80,7 @@ public abstract class Entity {
 
     public void levelUp() {
         level++;
-//        stats.increaseStatsForLevelUp();
-        stats.setCurrentHp(stats.getMaxHp()); // Restaura HP ao subir de nível
-        // Aqui você pode adicionar lógica para aumentar outras estatísticas, como ataque, defesa, etc.
+        stats.applyLevelUpBonus(job.getLevelUpBonus());
     }
 
     public Set<Tile> getMovableCells(GameMap grid) {
@@ -218,5 +217,13 @@ public abstract class Entity {
 
     public GameContext getGameContext() {
         return gameContext;
+    }
+
+    public Job getJob() {
+        return this.job;
+    }
+
+    public boolean canUserSharedInventory() {
+        return this.job instanceof Carrier;
     }
 }
