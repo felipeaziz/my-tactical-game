@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.ibra.tacticalrpg.GameContext;
+import com.ibra.tacticalrpg.entities.statuseffect.StatusEffectManager;
 import com.ibra.tacticalrpg.inventory.PersonalInventory;
 import com.ibra.tacticalrpg.job.Carrier;
 import com.ibra.tacticalrpg.job.Job;
@@ -23,6 +24,7 @@ public abstract class Entity {
     protected EntityStats stats;
     protected Job job;
     protected PersonalInventory personalInventory;
+    private final StatusEffectManager statusEffectManager;
 
     protected transient GameContext gameContext;
 
@@ -38,11 +40,66 @@ public abstract class Entity {
         this.name = name;
         this.job = job;
         this.stats = job.applyInitialStats();
+        this.statusEffectManager = new StatusEffectManager();
     }
 
     public abstract void takeTurn();
 
     public abstract Texture getTexture();
+
+    public void processStatusEffect() {
+        statusEffectManager.processEffects(stats);
+    }
+
+    public boolean canUserSharedInventory() {
+        return this.job instanceof Carrier;
+    }
+
+    public int getFinalAttack() {
+        int baseAttack = this.stats.getAttack();
+        baseAttack += this.personalInventory.getEquipmentBonus("attack");
+        baseAttack += this.statusEffectManager.getAttackModifier();
+        return baseAttack;
+    }
+
+    public int getFinalDefense() {
+        int baseDefense = this.stats.getDefense();
+        baseDefense += this.personalInventory.getEquipmentBonus("defense");
+        baseDefense += this.statusEffectManager.getDefenseModifier();
+        return baseDefense;
+    }
+
+    public int getFinalSpeed() {
+        int baseSpeed = this.stats.getSpeed();
+        baseSpeed += this.statusEffectManager.getSpeedModifier();
+        return Math.max(1, baseSpeed); // Garante que a velocidade mínima seja 1
+    }
+
+    public boolean canAct() {
+        return this.statusEffectManager.canAct() && this.isAlive();
+    }
+
+    public void levelUp() {
+        level++;
+        stats.applyLevelUpBonus(job.getLevelUpBonus());
+    }
+
+    public boolean isAlive() {
+        return stats.getCurrentHp() > 0;
+    }
+
+    public boolean isMoving() {
+        return !movePath.isEmpty();
+    }
+
+    public void resetTurn() {
+        movedThisTurn = false;
+        tookActionThisTurn = false;
+    }
+
+    public boolean isTurnDone() {
+        return movedThisTurn && tookActionThisTurn && !isMoving();
+    }
 
     public void render(SpriteBatch batch, Vector2 worldPosition) {
         batch.draw(getTexture(),
@@ -75,12 +132,6 @@ public abstract class Entity {
         shapeRenderer.rect(baseX, baseY - (barHeight + spacing), barWidth * mpRatio, barHeight);
 
         shapeRenderer.setColor(Color.WHITE); // reset color
-    }
-
-
-    public void levelUp() {
-        level++;
-        stats.applyLevelUpBonus(job.getLevelUpBonus());
     }
 
     public Set<Tile> getMovableCells(GameMap grid) {
@@ -160,19 +211,6 @@ public abstract class Entity {
         }
     }
 
-    public boolean isAlive() {
-        return stats.getCurrentHp() > 0;
-    }
-
-    public void resetTurn() {
-        movedThisTurn = false;
-        tookActionThisTurn = false;
-    }
-
-    public boolean isTurnDone() {
-        return movedThisTurn && tookActionThisTurn && !isMoving();
-    }
-
     // Getters e Setters
     public String getName() {
         return name;
@@ -203,10 +241,6 @@ public abstract class Entity {
         this.movePath.addAll(path);
     }
 
-    public boolean isMoving() {
-        return !movePath.isEmpty();
-    }
-
     protected int getSpriteHeight() {
         return getTexture().getHeight();
     }
@@ -223,7 +257,7 @@ public abstract class Entity {
         return this.job;
     }
 
-    public boolean canUserSharedInventory() {
-        return this.job instanceof Carrier;
+    public StatusEffectManager getStatusEffectManager() {
+        return this.statusEffectManager;
     }
 }

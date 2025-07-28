@@ -73,12 +73,19 @@ public class GameController {
         if (current.isMoving()) {
             return;
         }
-        // Se ainda não agiu, permite agir
-        if (!current.isTurnDone()) {
-            current.takeTurn();
-        } else {
-            current.getStats().updateEffects();
+        // Verifica se a entidade pode agir (não estã stunned)
+        if (!current.canAct()) {
+            logger.log(current.getName() + " não pode agir devido a efeitos de status.");
             advanceTurn();
+            return;
+        }
+
+        // Se já agiu, encerra o turno
+        if (current.isTurnDone()) {
+            current.processStatusEffect();
+            advanceTurn();
+        } else {
+            current.takeTurn();
         }
     }
 
