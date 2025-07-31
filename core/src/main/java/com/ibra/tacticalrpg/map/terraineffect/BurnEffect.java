@@ -14,8 +14,4 @@ public class BurnEffect implements TerrainEffect {
         }
     }
 
-    @Override
-    public void removeEffect(Entity entity) {
-
-    }
 }

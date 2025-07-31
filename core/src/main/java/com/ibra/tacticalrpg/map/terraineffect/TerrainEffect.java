@@ -4,5 +4,4 @@ import com.ibra.tacticalrpg.entities.Entity;
 
 public interface TerrainEffect {
     void applyEffect(Entity entity);
-    void removeEffect(Entity entity);
 }

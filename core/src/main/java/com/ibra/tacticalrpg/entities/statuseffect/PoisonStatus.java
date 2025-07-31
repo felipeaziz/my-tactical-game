@@ -22,4 +22,9 @@ public class PoisonStatus extends BaseStatusEffect {
         stats.setCurrentHp(stats.getCurrentHp() - intensity);
         System.out.println("Poison applied: " + intensity + " damage.");
     }
+
+    @Override
+    public void update() {
+        //Poison can only be removed by antidote or healing
+    }
 }
