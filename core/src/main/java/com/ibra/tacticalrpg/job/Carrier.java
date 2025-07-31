@@ -5,7 +5,7 @@ import com.ibra.tacticalrpg.skill.Skill;
 import com.ibra.tacticalrpg.skill.TargetType;
 import com.ibra.tacticalrpg.skill.effect.ThrowItemSkillEffect;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import static com.ibra.tacticalrpg.item.equipment.EquipmentSlot.*;
 
@@ -15,7 +15,10 @@ public class Carrier extends Job {
         super("Carrier",
             "A utility-oriented class specialized in carrying and using items effectively.");
         this.levelUpBonus = new EntityStats(1, 0, 0, 2, 0, 0, 0);
-        this.allowedEquipmentSlots = List.of(WEAPON, BOOTS, ACCESSORY_1);
+        this.allowedEquipmentSlots = new ArrayList<>();
+        this.allowedEquipmentSlots.add(WEAPON);
+        this.allowedEquipmentSlots.add(BOOTS);
+        this.allowedEquipmentSlots.add(ACCESSORY_1);
     }
 
     @Override

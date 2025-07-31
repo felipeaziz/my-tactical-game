@@ -7,6 +7,7 @@ import com.ibra.tacticalrpg.skill.Skill;
 import com.ibra.tacticalrpg.skill.effect.StatusEffectApplication;
 import com.ibra.tacticalrpg.skill.TargetType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Apprentice extends Job {
@@ -15,7 +16,10 @@ public class Apprentice extends Job {
         super("Apprentice",
             "A starting job for all adventures. The foundation of many advanced classes.");
         levelUpBonus = new EntityStats(2, 0, 0, 1, 0, 0, 0);
-        allowedEquipmentSlots = List.of(EquipmentSlot.WEAPON, EquipmentSlot.BOOTS, EquipmentSlot.ACCESSORY_1);
+        allowedEquipmentSlots = new ArrayList<>();
+        allowedEquipmentSlots.add(EquipmentSlot.WEAPON);
+        allowedEquipmentSlots.add(EquipmentSlot.BOOTS);
+        allowedEquipmentSlots.add(EquipmentSlot.ACCESSORY_1);
     }
 
     @Override

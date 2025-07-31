@@ -42,6 +42,7 @@ public abstract class Entity {
         this.job = job;
         this.stats = job.applyInitialStats();
         this.statusEffectManager = new StatusEffectManager();
+        this.personalInventory = new PersonalInventory();
     }
 
     public abstract void takeTurn();

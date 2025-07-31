@@ -13,7 +13,6 @@ public class SharedInventory extends Inventory {
     }
 
     private SharedInventory() {
-        // Initialize the inventory
-        this.items = new HashMap<>();
+        super();
     }
 }

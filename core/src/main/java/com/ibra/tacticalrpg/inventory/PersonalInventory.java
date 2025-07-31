@@ -16,6 +16,7 @@ public class PersonalInventory extends Inventory {
     private List<Equipment> unequippedItems;
 
     public PersonalInventory() {
+        super();
         this.equipedItems = new HashMap<>();
         this.unequippedItems = new ArrayList<>();
     }

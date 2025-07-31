@@ -4,6 +4,7 @@ import com.ibra.tacticalrpg.item.Item;
 import com.ibra.tacticalrpg.item.ItemType;
 import com.ibra.tacticalrpg.item.potion.ConsumableItem;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,6 +13,10 @@ public abstract class Inventory {
     protected static final int MAX_ITEMS_SLOTS = 100;
 
     protected Map<Item, Integer> items;
+
+    public Inventory() {
+        this.items = new HashMap<>();
+    }
 
     public boolean addItem(Item item, int quantity) {
         if (items.size() >= MAX_ITEMS_SLOTS) {
