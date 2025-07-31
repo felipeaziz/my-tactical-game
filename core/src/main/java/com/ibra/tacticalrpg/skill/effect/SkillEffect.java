@@ -1,4 +1,4 @@
-package com.ibra.tacticalrpg.skill;
+package com.ibra.tacticalrpg.skill.effect;
 
 import com.ibra.tacticalrpg.entities.Entity;
 

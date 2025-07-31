@@ -3,6 +3,7 @@ package com.ibra.tacticalrpg.job;
 import com.ibra.tacticalrpg.entities.EntityStats;
 import com.ibra.tacticalrpg.skill.Skill;
 import com.ibra.tacticalrpg.skill.TargetType;
+import com.ibra.tacticalrpg.skill.effect.ThrowItemSkillEffect;
 
 import java.util.List;
 
@@ -24,11 +25,13 @@ public class Carrier extends Job {
 
     @Override
     public void applyInitialSkills(EntityStats stats) {
-        //TODO - If the player has this skill, they can thrown and use an item on any entity in a certain range.
         this.skills.add(new Skill(
             "Throw Item",
             "Use an item from your inventory on a selected target on distance.",
             TargetType.ANY,
-            null));
+            new ThrowItemSkillEffect(),
+            5,
+            0,
+            1));
     }
 }

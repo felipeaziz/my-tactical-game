@@ -1,8 +1,10 @@
 package com.ibra.tacticalrpg.job;
 
 import com.ibra.tacticalrpg.entities.EntityStats;
+import com.ibra.tacticalrpg.entities.statuseffect.DoubleXpStatusEffect;
 import com.ibra.tacticalrpg.item.equipment.EquipmentSlot;
 import com.ibra.tacticalrpg.skill.Skill;
+import com.ibra.tacticalrpg.skill.effect.StatusEffectApplication;
 import com.ibra.tacticalrpg.skill.TargetType;
 
 import java.util.List;
@@ -24,7 +26,6 @@ public class Apprentice extends Job {
     @Override
     public void applyInitialSkills(EntityStats stats) {
         this.skills.add(new Skill("Watch", "Spend your turn watching and learning.",
-            TargetType.SELF, null));
-        // TODO - when using this skill, the entity should gain a small amount of experience or insight, but not take any action.
+            TargetType.SELF, new StatusEffectApplication(new DoubleXpStatusEffect(1))));
     }
 }

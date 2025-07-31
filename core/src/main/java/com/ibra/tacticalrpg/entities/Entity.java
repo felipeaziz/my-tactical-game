@@ -260,4 +260,8 @@ public abstract class Entity {
     public StatusEffectManager getStatusEffectManager() {
         return this.statusEffectManager;
     }
+
+    public int getLevel() {
+        return this.level;
+    }
 }
