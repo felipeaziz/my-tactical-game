@@ -12,6 +12,7 @@ import com.ibra.tacticalrpg.job.Carrier;
 import com.ibra.tacticalrpg.job.Job;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
+import com.ibra.tacticalrpg.skill.effect.ThrowItemSkillEffect;
 
 import java.util.*;
 
@@ -186,6 +187,33 @@ public abstract class Entity {
             }
         }
         return attackable;
+    }
+
+    public Set<Tile> getReachableCellsToUseItem(GameMap grid) {
+        Set<Tile> reachable = new HashSet<>();
+        Tile start = findEntityTile(grid, this);
+        if (start == null) return reachable;
+
+        int range = calculateRange();
+        for (int dx = -range; dx <= range; dx++) {
+            for (int dy = -range; dy <= range; dy++) {
+                if (Math.abs(dx) + Math.abs(dy) <= range) {
+                    Tile cell = grid.getTile(start.getGridPositionX() + dx, start.getGridPositionY() + dy);
+                    if (cell != null && cell != start) {
+                        reachable.add(cell);
+                    }
+                }
+            }
+        }
+        return reachable;
+    }
+
+    private int calculateRange() {
+        if(this.job instanceof Carrier
+            || this.job.getSkills().stream().anyMatch(skill -> skill.getName().equals("Throw Item"))) {
+            return 5;
+        }
+        return 1;
     }
 
     public void updateMovement(GameMap grid, float delta) {

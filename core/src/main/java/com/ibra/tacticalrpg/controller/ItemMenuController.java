@@ -120,11 +120,10 @@ public class ItemMenuController {
      */
     private void highlightValidTargets(GameMap grid, PlayerEntity player, ConsumableItem item) {
         clearHighlights(grid);
-        //TODO - should highlight just at range=1 and self
-        for (Tile tile : grid.getBaseTiles()) {
+        for (Tile tile : player.getReachableCellsToUseItem(grid)) {
             if (tile.isOccupied()) {
                 tile.setHighlighted(true);
-                tile.setHighlightType(HighlightType.ITEM); // Você pode precisar adicionar este tipo
+                tile.setHighlightType(HighlightType.ITEM);
             }
         }
     }
