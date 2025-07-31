@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.ibra.tacticalrpg.GameContext;
 import com.ibra.tacticalrpg.TacticalRPG;
-import com.ibra.tacticalrpg.controller.CameraController;
-import com.ibra.tacticalrpg.controller.EventLogger;
-import com.ibra.tacticalrpg.controller.GameController;
-import com.ibra.tacticalrpg.controller.PlayerController;
+import com.ibra.tacticalrpg.controller.*;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
@@ -80,9 +77,14 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
         handleTurns();
 
         Entity currentPlayer = gameController.getCurrentEntity();
-        if(cameraController.isCameraStable() && currentPlayer instanceof PlayerEntity && !currentPlayer.isMoving()) {
+        if(cameraController.isCameraStable()
+            && currentPlayer instanceof PlayerEntity
+            && !currentPlayer.isMoving()) {
             PlayerEntity player = (PlayerEntity) currentPlayer;
             uiRenderer.renderActionMenu(game.getBatch(), map, player);
+            ItemMenuController itemController = playerController.getItemMenuController();
+            uiRenderer.renderItemMenu(game.getBatch(), itemController);
+            uiRenderer.renderItemStatus(game.getBatch(), itemController);
         }
         renderEventLog();
     }

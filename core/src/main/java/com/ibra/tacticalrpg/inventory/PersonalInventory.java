@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PersonalInventory {
+public class PersonalInventory extends Inventory {
     private static final int MAX_ITEMS_SLOTS = 10;
 
     private Map<EquipmentSlot, Equipment> equipedItems;

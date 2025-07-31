@@ -13,10 +13,13 @@ import com.ibra.tacticalrpg.grid.IsometricGridUtils;
 import com.ibra.tacticalrpg.map.HighlightType;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
+import com.ibra.tacticalrpg.ui.ItemMenuState;
 
 import java.util.List;
 
 public class PlayerController {
+    private final ItemMenuController itemMenuController = new ItemMenuController();
+
     public void handleInput(GameMap grid,
                             List<Entity> entities,
                             EventLogger logger,
@@ -24,6 +27,10 @@ public class PlayerController {
                             OrthographicCamera camera) {
         if (player.isActionDone() || player.isMoving()) return;
         if (GameController.getInstance().getCurrentEntity() != player) {
+            return;
+        }
+        if (itemMenuController.getMenuState() != ItemMenuState.CLOSED) {
+            itemMenuController.handleItemMenuInput(grid, entities, logger, player, camera);
             return;
         }
 
@@ -44,7 +51,13 @@ public class PlayerController {
             }
             player.setCurrentActionType(PlayerActionType.ATTACK);
             player.setCurrentAction(new AttackAction(grid, null));
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
+        } else if(!player.hasActed() && Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
+            clearHighlights(grid);
+            player.setCurrentActionType(PlayerActionType.ITEM);
+            player.setCurrentAction(null);
+            itemMenuController.openItemMenu(grid, player);
+            logger.log("Selecione um item para usar.");
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
             player.setActionDone(true);
             player.setMovedThisTurn(true);
             player.setActedThisTurn(true);
@@ -89,6 +102,10 @@ public class PlayerController {
         }
     }
 
+    public ItemMenuController getItemMenuController() {
+        return itemMenuController;
+    }
+
     private static void executeAttack(GameMap grid, List<Entity> entities, EventLogger logger, PlayerEntity player, Tile targetTile) {
         if (!targetTile.isOccupied()) {
             logger.log("Ataque falhou!");
@@ -116,7 +133,7 @@ public class PlayerController {
         logger.log("Você se moveu.");
     }
 
-    private static void clearHighlights(GameMap grid) {
+    public static void clearHighlights(GameMap grid) {
         grid.getBaseTiles().forEach(tile -> {
             tile.setHighlighted(false);
             tile.setHighlightType(HighlightType.NONE);

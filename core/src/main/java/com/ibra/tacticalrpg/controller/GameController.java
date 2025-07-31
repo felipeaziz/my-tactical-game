@@ -79,7 +79,6 @@ public class GameController {
             advanceTurn();
             return;
         }
-
         // Se já agiu, encerra o turno
         if (current.isTurnDone()) {
             current.processStatusEffect();

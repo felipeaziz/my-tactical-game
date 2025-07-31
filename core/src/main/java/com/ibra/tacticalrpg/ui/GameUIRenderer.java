@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
+import com.ibra.tacticalrpg.controller.ItemMenuController;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 
@@ -14,16 +15,18 @@ public class GameUIRenderer {
     private final BitmapFont font;
     private final ShapeRenderer shapeRenderer;
     private final Matrix4 uiMatrix = new Matrix4();
+    private final ItemMenuRenderer itemMenuRenderer;
 
     public GameUIRenderer(BitmapFont font) {
         this.font = font;
         this.shapeRenderer = new ShapeRenderer();
+        this.itemMenuRenderer = new ItemMenuRenderer(font, shapeRenderer);
     }
 
     public void renderActionMenu(SpriteBatch batch, GameMap map, PlayerEntity player) {
         float padding = 6f;
         float lineHeight = 20;
-        String[] options = {"1 - Mover", "2 - Atacar", "3 - Fim do Turno"};
+        String[] options = {"1 - Mover", "2 - Atacar", "3 - Usar Item", "4 - Fim do Turno"};
 
         // Medir o maior texto para definir largura da caixa
         GlyphLayout layout = new GlyphLayout();
@@ -63,6 +66,27 @@ public class GameUIRenderer {
             font.draw(batch, option, boxX + padding, y);
         }
         batch.end();
+    }
+
+    public void renderItemMenu(SpriteBatch batch, ItemMenuController itemController) {
+        itemMenuRenderer.renderItemMenu(batch, itemController, getUiMatrix());
+    }
+
+    public void renderItemStatus(SpriteBatch batch, ItemMenuController itemController) {
+        if (itemController.getMenuState() == ItemMenuState.SELECTING_TARGET) {
+            Matrix4 uiMatrix = getUiMatrix();
+            batch.setProjectionMatrix(uiMatrix);
+
+            batch.begin();
+            font.setColor(Color.YELLOW);
+            String message = "Clique no alvo para usar " +
+                (itemController.getSelectedItem() != null ?
+                    itemController.getSelectedItem().getName() : "item") +
+                " | ESC para cancelar";
+            font.draw(batch, message, 20, Gdx.graphics.getHeight() - 100);
+            font.setColor(Color.WHITE);
+            batch.end();
+        }
     }
 
     public Matrix4 getUiMatrix() {

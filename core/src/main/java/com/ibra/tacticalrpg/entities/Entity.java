@@ -264,4 +264,8 @@ public abstract class Entity {
     public int getLevel() {
         return this.level;
     }
+
+    public PersonalInventory getPersonalInventory() {
+        return personalInventory;
+    }
 }
