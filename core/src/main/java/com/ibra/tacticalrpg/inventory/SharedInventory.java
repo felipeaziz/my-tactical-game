@@ -1,7 +1,5 @@
 package com.ibra.tacticalrpg.inventory;
 
-import java.util.HashMap;
-
 public class SharedInventory extends Inventory {
     private static SharedInventory instance;
 

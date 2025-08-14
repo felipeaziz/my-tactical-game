@@ -1,19 +1,23 @@
 package com.ibra.tacticalrpg.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Rectangle;
 import com.ibra.tacticalrpg.controller.ItemMenuController;
-import com.ibra.tacticalrpg.item.potion.ConsumableItem;
+import com.ibra.tacticalrpg.item.consumable.ConsumableItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemMenuRenderer {
     private final BitmapFont font;
     private final ShapeRenderer shapeRenderer;
+    private final List<Rectangle> itemBounds = new ArrayList<>(); // Para detectar cliques
 
     public ItemMenuRenderer(BitmapFont font, ShapeRenderer shapeRenderer) {
         this.font = font;
@@ -29,6 +33,7 @@ public class ItemMenuRenderer {
             return;
         }
 
+        itemBounds.clear();
         float padding = 10f;
         float lineHeight = 25f;
         float itemStartY = 150f; // Altura onde começam os items
@@ -47,16 +52,15 @@ public class ItemMenuRenderer {
             maxWidth = Math.max(maxWidth, layout.width);
         }
 
-        String instructions = "↑↓ Navegar | Enter: Selecionar | Esc: Cancelar";
+        String instructions = "Clique no item para selecionar | Esc: Cancelar";
         layout.setText(font, instructions);
         maxWidth = Math.max(maxWidth, layout.width);
 
         float boxWidth = maxWidth + 2 * padding;
         float boxHeight = lineHeight * (availableItems.size() + 3) + padding * 2; // +3 para título e instruções
 
-        // Posição central da tela
-        float boxX = (uiMatrix.val[Matrix4.M00] * 0.5f) - (boxWidth * 0.5f);
-        float boxY = itemStartY + boxHeight;
+        float boxX = (Gdx.graphics.getWidth() - boxWidth) * 0.5f;
+        float boxY = (Gdx.graphics.getHeight() + boxHeight) * 0.5f;
 
         // Configurar projeção
         shapeRenderer.setProjectionMatrix(uiMatrix);
@@ -89,6 +93,14 @@ public class ItemMenuRenderer {
             ConsumableItem item = availableItems.get(i);
             String itemText = (i + 1) + ". " + item.getName();
 
+            Rectangle itemBound = new Rectangle(
+                boxX + padding,
+                textY - lineHeight,
+                boxWidth - 2 * padding,
+                lineHeight
+            );
+            itemBounds.add(itemBound);
+
             // Destacar item selecionado
             if (i == itemController.getSelectedItemIndex()) {
                 font.setColor(Color.CYAN);
@@ -117,5 +129,31 @@ public class ItemMenuRenderer {
 
         // Resetar cor da fonte
         font.setColor(Color.WHITE);
+    }
+
+    /**
+     * Verifica se um ponto (coordenadas de tela) está sobre algum item do menu
+     * @param screenX coordenada X da tela (do clique)
+     * @param screenY coordenada Y da tela (do clique)
+     * @return índice do item clicado, ou -1 se não clicou em nenhum item
+     */
+    public int getClickedItemIndex(float screenX, float screenY) {
+        // Converter coordenadas de tela (Y invertido) para coordenadas do UI
+        float uiY = Gdx.graphics.getHeight() - screenY;
+
+        for (int i = 0; i < itemBounds.size(); i++) {
+            Rectangle bound = itemBounds.get(i);
+            if (bound.contains(screenX, uiY)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Limpa os bounds dos itens (chamado quando o menu fecha)
+     */
+    public void clearItemBounds() {
+        itemBounds.clear();
     }
 }

@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.ibra.tacticalrpg.action.ItemUseAction;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
-import com.ibra.tacticalrpg.item.potion.ConsumableItem;
+import com.ibra.tacticalrpg.item.consumable.ConsumableItem;
 import com.ibra.tacticalrpg.map.HighlightType;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
@@ -60,9 +60,9 @@ public class ItemMenuController {
      */
     private void handleItemSelection(GameMap grid, EventLogger logger, PlayerEntity player) {
         // Navegação no menu
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             selectedItemIndex = Math.max(0, selectedItemIndex - 1);
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             selectedItemIndex = Math.min(availableItems.size() - 1, selectedItemIndex + 1);
         }
 

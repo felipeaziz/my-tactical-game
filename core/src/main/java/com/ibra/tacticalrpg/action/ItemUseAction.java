@@ -1,7 +1,7 @@
 package com.ibra.tacticalrpg.action;
 
 import com.ibra.tacticalrpg.entities.Entity;
-import com.ibra.tacticalrpg.item.potion.ConsumableItem;
+import com.ibra.tacticalrpg.item.consumable.ConsumableItem;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
 

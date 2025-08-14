@@ -1,4 +1,4 @@
-package com.ibra.tacticalrpg.item.potion;
+package com.ibra.tacticalrpg.item.consumable;
 
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.item.ItemType;

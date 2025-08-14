@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.ibra.tacticalrpg.entities.EnemyEntity;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
+import com.ibra.tacticalrpg.item.consumable.Antidote;
+import com.ibra.tacticalrpg.item.consumable.HealingPotion;
 import com.ibra.tacticalrpg.job.Apprentice;
 import com.ibra.tacticalrpg.job.Carrier;
 import com.ibra.tacticalrpg.map.TerrainType;
@@ -104,6 +106,8 @@ public class GameMap {
     private void addEntities() {
         Tile tile1 = getTile(2, 2);
         Entity hero = new PlayerEntity("Hero", new Apprentice());
+        hero.getPersonalInventory().addItem(new HealingPotion(), 2);
+        hero.getPersonalInventory().addItem(new Antidote(), 1);
         tile1.setOccupant(hero);
         entities.add(hero);
 

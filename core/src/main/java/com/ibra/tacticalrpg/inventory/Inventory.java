@@ -2,7 +2,7 @@ package com.ibra.tacticalrpg.inventory;
 
 import com.ibra.tacticalrpg.item.Item;
 import com.ibra.tacticalrpg.item.ItemType;
-import com.ibra.tacticalrpg.item.potion.ConsumableItem;
+import com.ibra.tacticalrpg.item.consumable.ConsumableItem;
 
 import java.util.HashMap;
 import java.util.List;
