@@ -13,23 +13,29 @@ import com.ibra.tacticalrpg.grid.IsometricGridUtils;
 import com.ibra.tacticalrpg.map.HighlightType;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
+import com.ibra.tacticalrpg.ui.GameUIRenderer;
 import com.ibra.tacticalrpg.ui.ItemMenuState;
 
 import java.util.List;
 
 public class PlayerController {
     private final ItemMenuController itemMenuController = new ItemMenuController();
+    private GameUIRenderer uiRenderer;
 
     public void handleInput(GameMap grid,
                             List<Entity> entities,
                             EventLogger logger,
                             PlayerEntity player,
-                            OrthographicCamera camera) {
+                            OrthographicCamera camera,
+                            GameUIRenderer uiRenderer) {
         if (player.isActionDone() || player.isMoving()) return;
         if (GameController.getInstance().getCurrentEntity() != player) {
             return;
         }
         if (itemMenuController.getMenuState() != ItemMenuState.CLOSED) {
+            if(uiRenderer.handleItemMenuClick(itemMenuController, grid, logger, player)) {
+                return;
+            }
             itemMenuController.handleItemMenuInput(grid, entities, logger, player, camera);
             return;
         }

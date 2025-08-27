@@ -33,7 +33,8 @@ public class PlayerEntity extends Entity {
                 gameController.getEntities(),
                 logger,
                 this,
-                gameContext.getCamera());
+                gameContext.getCamera(),
+                gameContext.getUiRenderer());
         }
     }
 

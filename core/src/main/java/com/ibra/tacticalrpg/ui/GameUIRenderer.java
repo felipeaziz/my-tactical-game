@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
+import com.ibra.tacticalrpg.controller.EventLogger;
 import com.ibra.tacticalrpg.controller.ItemMenuController;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
@@ -54,7 +55,7 @@ public class GameUIRenderer {
         shapeRenderer.end();
         // Desenhar borda
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.WHITE); // borda branca
+        shapeRenderer.setColor(Color.WHITE);
         shapeRenderer.rect(boxX, boxY - boxHeight, boxWidth, boxHeight);
         shapeRenderer.end();
         // Desenhar as opções
@@ -87,6 +88,27 @@ public class GameUIRenderer {
             font.setColor(Color.WHITE);
             batch.end();
         }
+    }
+
+    public boolean handleItemMenuClick(ItemMenuController itemController,
+                                       GameMap grid,
+                                       EventLogger logger,
+                                       PlayerEntity player) {
+        if (itemController.getMenuState() != ItemMenuState.SELECTING_ITEM) {
+            return false;
+        }
+
+        if (Gdx.input.justTouched()) {
+            float mouseX = Gdx.input.getX();
+            float mouseY = Gdx.input.getY();
+
+            int clickedItemIndex = itemMenuRenderer.getClickedItemIndex(mouseX, mouseY);
+            if (clickedItemIndex >= 0) {
+                itemController.handleItemClick(clickedItemIndex, grid, logger, player);
+                return true;
+            }
+        }
+        return false;
     }
 
     public Matrix4 getUiMatrix() {

@@ -52,7 +52,12 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
     private void initializeGame() {
         this.eventLog = new EventLog(LOG_SIZE);
         this.map = new GameMap();
-        this.gameContext = new GameContext(gameController, playerController, cameraController, this.map, this);
+        this.gameContext = new GameContext(gameController,
+            playerController,
+            cameraController,
+            this.map,
+            uiRenderer,
+            this);
         gameController.setup(map.getEntities());
         turnState = TurnState.PLAYER;
         for (Entity ent : map.getEntities()) {

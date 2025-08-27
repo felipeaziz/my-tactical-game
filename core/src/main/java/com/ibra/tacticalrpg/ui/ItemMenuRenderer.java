@@ -34,9 +34,8 @@ public class ItemMenuRenderer {
         }
 
         itemBounds.clear();
-        float padding = 10f;
-        float lineHeight = 25f;
-        float itemStartY = 150f; // Altura onde começam os items
+        float padding = 6f;
+        float lineHeight = 20f;
         // Medir a largura necessária
         GlyphLayout layout = new GlyphLayout();
         float maxWidth = 0f;
@@ -59,16 +58,17 @@ public class ItemMenuRenderer {
         float boxWidth = maxWidth + 2 * padding;
         float boxHeight = lineHeight * (availableItems.size() + 3) + padding * 2; // +3 para título e instruções
 
-        float boxX = (Gdx.graphics.getWidth() - boxWidth) * 0.5f;
-        float boxY = (Gdx.graphics.getHeight() + boxHeight) * 0.5f;
-
+//        float boxX = (Gdx.graphics.getWidth() - boxWidth) * 0.5f;
+        float boxX = 95f; // Posição fixa do lado do menu base.
+//        float boxY = (Gdx.graphics.getHeight() + boxHeight) * 0.5f;
+        float boxY = boxHeight + 20f; // Posição fixa do lado do menu Use Item
         // Configurar projeção
         shapeRenderer.setProjectionMatrix(uiMatrix);
         batch.setProjectionMatrix(uiMatrix);
 
         // Desenhar fundo
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(new Color(0.1f, 0.1f, 0.1f, 0.9f));
+        shapeRenderer.setColor(new Color(0f, 0f, 0f, 0.7f));
         shapeRenderer.rect(boxX, boxY - boxHeight, boxWidth, boxHeight);
         shapeRenderer.end();
 
@@ -86,13 +86,12 @@ public class ItemMenuRenderer {
         // Título
         font.setColor(Color.YELLOW);
         font.draw(batch, title, boxX + padding, textY);
-        textY -= lineHeight * 1.5f;
+        textY -= lineHeight;
 
         // Items
         for (int i = 0; i < availableItems.size(); i++) {
             ConsumableItem item = availableItems.get(i);
             String itemText = (i + 1) + ". " + item.getName();
-
             Rectangle itemBound = new Rectangle(
                 boxX + padding,
                 textY - lineHeight,
@@ -101,8 +100,10 @@ public class ItemMenuRenderer {
             );
             itemBounds.add(itemBound);
 
-            // Destacar item selecionado
-            if (i == itemController.getSelectedItemIndex()) {
+            float mouseX = Gdx.input.getX();
+            float mouseY = Gdx.input.getY();
+            int clickedItemIndex = getClickedItemIndex(mouseX, mouseY);
+            if (i == clickedItemIndex) {
                 font.setColor(Color.CYAN);
                 // Desenhar background de seleção
                 shapeRenderer.setProjectionMatrix(uiMatrix);

@@ -193,6 +193,7 @@ public abstract class Entity {
     public Set<Tile> getReachableCellsToUseItem(GameMap grid) {
         Set<Tile> reachable = new HashSet<>();
         Tile start = findEntityTile(grid, this);
+        reachable.add(start);
         if (start == null) return reachable;
 
         int range = calculateRange();

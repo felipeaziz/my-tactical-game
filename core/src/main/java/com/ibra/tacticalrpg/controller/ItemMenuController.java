@@ -59,23 +59,23 @@ public class ItemMenuController {
      * Lida com a seleção do item no menu
      */
     private void handleItemSelection(GameMap grid, EventLogger logger, PlayerEntity player) {
-        // Navegação no menu
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
-            selectedItemIndex = Math.max(0, selectedItemIndex - 1);
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            selectedItemIndex = Math.min(availableItems.size() - 1, selectedItemIndex + 1);
-        }
-
-        // Confirmação da seleção
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            selectedItem = availableItems.get(selectedItemIndex);
-            menuState = ItemMenuState.SELECTING_TARGET;
-            highlightValidTargets(grid, player, selectedItem);
-            logger.log("Selecione um alvo para " + selectedItem.getName());
-        }
         // Cancelar seleção
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             closeItemMenu(grid);
+        }
+    }
+
+    public void handleItemClick(int itemIndex, GameMap grid, EventLogger logger, PlayerEntity player) {
+        if (menuState != ItemMenuState.SELECTING_ITEM) {
+            return;
+        }
+
+        if (itemIndex >= 0 && itemIndex < availableItems.size()) {
+            selectedItemIndex = itemIndex;
+            selectedItem = availableItems.get(selectedItemIndex);
+            menuState = ItemMenuState.SELECTING_TARGET;
+             highlightValidTargets(grid, player, selectedItem);
+            logger.log("Selecione um alvo para " + selectedItem.getName());
         }
     }
 
@@ -121,7 +121,7 @@ public class ItemMenuController {
     private void highlightValidTargets(GameMap grid, PlayerEntity player, ConsumableItem item) {
         clearHighlights(grid);
         for (Tile tile : player.getReachableCellsToUseItem(grid)) {
-            if (tile.isOccupied()) {
+            if (!tile.getTerrainType().isObstacle()) {
                 tile.setHighlighted(true);
                 tile.setHighlightType(HighlightType.ITEM);
             }
