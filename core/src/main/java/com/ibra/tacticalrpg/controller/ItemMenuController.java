@@ -16,13 +16,16 @@ import com.ibra.tacticalrpg.ui.ItemMenuState;
 
 import java.util.List;
 
-import static com.ibra.tacticalrpg.controller.PlayerController.clearHighlights;
-
 public class ItemMenuController {
     private ItemMenuState menuState = ItemMenuState.CLOSED;
     private List<ConsumableItem> availableItems;
     private int selectedItemIndex = 0;
     private ConsumableItem selectedItem;
+    private final ActionController actionController;
+
+    public ItemMenuController(ActionController actionController) {
+        this.actionController = actionController;
+    }
 
     /**
      * Lida com input relacionado ao menu de items
@@ -43,7 +46,7 @@ public class ItemMenuController {
     }
 
     /**
-     * Abre o menu de seleção de items
+     * Abre o menu de sele��ão de items
      */
     public void openItemMenu(GameMap grid, PlayerEntity player) {
         availableItems = player.getPersonalInventory().getConsumableItems();
@@ -91,7 +94,7 @@ public class ItemMenuController {
         // Cancelar seleção de alvo
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             menuState = ItemMenuState.SELECTING_ITEM;
-            clearHighlights(grid);
+            actionController.clearHighlights(grid);
             return;
         }
 
@@ -119,7 +122,7 @@ public class ItemMenuController {
      * Destaca tiles válidos para usar o item
      */
     private void highlightValidTargets(GameMap grid, PlayerEntity player, ConsumableItem item) {
-        clearHighlights(grid);
+        actionController.clearHighlights(grid);
         for (Tile tile : player.getReachableCellsToUseItem(grid)) {
             if (!tile.getTerrainType().isObstacle()) {
                 tile.setHighlighted(true);
@@ -151,7 +154,7 @@ public class ItemMenuController {
         selectedItem = null;
         availableItems = null;
         selectedItemIndex = 0;
-        clearHighlights(grid);
+        actionController.clearHighlights(grid);
     }
     public ItemMenuState getMenuState() {
         return menuState;

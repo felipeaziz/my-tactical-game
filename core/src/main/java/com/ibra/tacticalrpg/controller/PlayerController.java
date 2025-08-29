@@ -1,16 +1,11 @@
 package com.ibra.tacticalrpg.controller;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.ibra.tacticalrpg.action.AttackAction;
-import com.ibra.tacticalrpg.action.MoveAction;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
-import com.ibra.tacticalrpg.grid.IsometricGridUtils;
-import com.ibra.tacticalrpg.map.HighlightType;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
 import com.ibra.tacticalrpg.ui.GameUIRenderer;
@@ -19,8 +14,12 @@ import com.ibra.tacticalrpg.ui.ItemMenuState;
 import java.util.List;
 
 public class PlayerController {
-    private final ItemMenuController itemMenuController = new ItemMenuController();
-    private GameUIRenderer uiRenderer;
+    private final ActionController actionController = new ActionController();
+    private final ItemMenuController itemMenuController;
+
+    public PlayerController() {
+        this.itemMenuController = new ItemMenuController(actionController);
+    }
 
     public void handleInput(GameMap grid,
                             List<Entity> entities,
@@ -28,121 +27,100 @@ public class PlayerController {
                             PlayerEntity player,
                             OrthographicCamera camera,
                             GameUIRenderer uiRenderer) {
-        if (player.isActionDone() || player.isMoving()) return;
-        if (GameController.getInstance().getCurrentEntity() != player) {
-            return;
-        }
-        if (itemMenuController.getMenuState() != ItemMenuState.CLOSED) {
-            if(uiRenderer.handleItemMenuClick(itemMenuController, grid, logger, player)) {
-                return;
-            }
-            itemMenuController.handleItemMenuInput(grid, entities, logger, player, camera);
+        if (!canHandleInput(player)) return;
+
+        // Se o menu de itens estiver aberto, trata a entrada dele primeiro
+        if (handleItemMenuInput(grid, entities, logger, player, camera, uiRenderer)) {
             return;
         }
 
-        // Input para seleção de ação
-        if (!player.hasMoved() && Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-            clearHighlights(grid);
-            for (Tile tile : player.getMovableCells(grid)) {
-                tile.setHighlighted(true);
-                tile.setHighlightType(HighlightType.MOVE);
-            }
-            player.setCurrentActionType(PlayerActionType.MOVE);
-            player.setCurrentAction(new MoveAction(grid, null, null));
-        } else if (!player.hasActed() && Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
-            clearHighlights(grid);
-            for (Tile tile : player.getAttackableCells(grid)) {
-                tile.setHighlighted(true);
-                tile.setHighlightType(HighlightType.ATTACK);
-            }
-            player.setCurrentActionType(PlayerActionType.ATTACK);
-            player.setCurrentAction(new AttackAction(grid, null));
-        } else if(!player.hasActed() && Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
-            clearHighlights(grid);
-            player.setCurrentActionType(PlayerActionType.ITEM);
-            player.setCurrentAction(null);
-            itemMenuController.openItemMenu(grid, player);
-            logger.log("Selecione um item para usar.");
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
-            player.setActionDone(true);
-            player.setMovedThisTurn(true);
-            player.setActedThisTurn(true);
-            player.setCurrentAction(null);
-            player.setCurrentActionType(PlayerActionType.NONE);
-            clearHighlights(grid);
-            logger.log("Turno encerrado.");
-        }
-
-        // Input para seleção de tile
+        // Verifica se clicou em alguma opção do menu de ações ou em um tile
         if (Gdx.input.justTouched()) {
-            Vector3 screenMouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            Vector3 worldMouse3D = camera.unproject(screenMouse);
-            Vector2 worldMouse = new Vector2(worldMouse3D.x, worldMouse3D.y);
-            Tile targetTile = null;
-            for (Tile tile : grid.getBaseTiles()) {
-                if (tile.isHighlighted() && tile.isPointInsideDiamond(worldMouse)) {
-                    targetTile = tile;
-                    break;
-                }
-            }
-            if (targetTile != null) {
-                switch (player.getCurrentActionType()) {
-                    case MOVE:
-                        if (!player.hasMoved() && player.getMovableCells(grid).contains(targetTile)) {
-                            executeMove(grid, logger, player, targetTile);
-                        }
-                        break;
-                    case ATTACK:
-                        if (!player.hasActed()) {
-                            executeAttack(grid, entities, logger, player, targetTile);
-                        }
-                        break;
-                }
-
-                if (player.hasMoved() && player.hasActed()) {
-                    player.setActionDone(true);
-                    player.setCurrentActionType(PlayerActionType.NONE);
-                }
-                clearHighlights(grid);
-            }
+            handleMouseInput(grid, entities, logger, player, camera, uiRenderer);
         }
+    }
+
+    private boolean canHandleInput(PlayerEntity player) {
+        if (player.isActionDone() || player.isMoving()) return false;
+        if (GameController.getInstance().getCurrentEntity() != player) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean handleItemMenuInput(GameMap grid,
+                                      List<Entity> entities,
+                                      EventLogger logger,
+                                      PlayerEntity player,
+                                      OrthographicCamera camera,
+                                      GameUIRenderer uiRenderer) {
+        if (itemMenuController.getMenuState() == ItemMenuState.CLOSED) {
+            return false;
+        }
+
+        if(uiRenderer.handleItemMenuClick(itemMenuController, grid, logger, player)) {
+            return true;
+        }
+        itemMenuController.handleItemMenuInput(grid, entities, logger, player, camera);
+        return true;
+    }
+
+    private void handleMouseInput(GameMap grid,
+                                List<Entity> entities,
+                                EventLogger logger,
+                                PlayerEntity player,
+                                OrthographicCamera camera,
+                                GameUIRenderer uiRenderer) {
+        float mouseX = Gdx.input.getX();
+        float mouseY = Gdx.input.getY();
+
+        // Tenta selecionar uma ação do menu
+        int actionIndex = uiRenderer.getClickedItemIndex(mouseX, mouseY);
+        if (actionIndex >= 0) {
+            actionController.handleActionSelection(actionIndex, grid, player, logger, itemMenuController);
+            return;
+        }
+
+        // Tenta selecionar um tile no mapa
+        Tile targetTile = findClickedTile(grid, camera, mouseX, mouseY);
+        if (targetTile != null) {
+            executeActionOnTile(grid, entities, logger, player, targetTile);
+        }
+    }
+
+    private Tile findClickedTile(GameMap grid, OrthographicCamera camera, float mouseX, float mouseY) {
+        Vector3 screenMouse = new Vector3(mouseX, mouseY, 0);
+        Vector3 worldMouse3D = camera.unproject(screenMouse);
+        Vector2 worldMouse = new Vector2(worldMouse3D.x, worldMouse3D.y);
+
+        return grid.getBaseTiles().stream()
+            .filter(tile -> tile.isHighlighted() && tile.isPointInsideDiamond(worldMouse))
+            .findFirst()
+            .orElse(null);
+    }
+
+    private void executeActionOnTile(GameMap grid,
+                                   List<Entity> entities,
+                                   EventLogger logger,
+                                   PlayerEntity player,
+                                   Tile targetTile) {
+        switch (player.getCurrentActionType()) {
+            case MOVE:
+                actionController.executeMove(grid, logger, player, targetTile);
+                break;
+            case ATTACK:
+                actionController.executeAttack(grid, entities, logger, player, targetTile);
+                break;
+        }
+
+        if (player.hasMoved() && player.hasActed()) {
+            player.setActionDone(true);
+            player.setCurrentActionType(PlayerActionType.NONE);
+        }
+        actionController.clearHighlights(grid);
     }
 
     public ItemMenuController getItemMenuController() {
         return itemMenuController;
-    }
-
-    private static void executeAttack(GameMap grid, List<Entity> entities, EventLogger logger, PlayerEntity player, Tile targetTile) {
-        if (!targetTile.isOccupied()) {
-            logger.log("Ataque falhou!");
-        } else {
-            Entity target = targetTile.getOccupant();
-            if (entities.contains(target)) {
-                AttackAction attackAction = new AttackAction(grid, targetTile);
-                player.setCurrentAction(attackAction);
-                attackAction.execute(player, target);
-                if (!target.isAlive()) {
-                    logger.log("Inimigo derrotado!");
-                } else {
-                    logger.log("Ataque bem-sucedido! HP restante: " + target.getStats().getCurrentHp());
-                }
-            }
-        }
-        player.setActedThisTurn(true);
-    }
-
-    private static void executeMove(GameMap grid, EventLogger logger, PlayerEntity player, Tile targetTile) {
-        Tile fromTile = IsometricGridUtils.findEntityTile(grid, player);
-        MoveAction moveAction = new MoveAction(grid, fromTile, targetTile);
-        player.setCurrentAction(moveAction);
-        moveAction.execute(player, null);
-        logger.log("Você se moveu.");
-    }
-
-    public static void clearHighlights(GameMap grid) {
-        grid.getBaseTiles().forEach(tile -> {
-            tile.setHighlighted(false);
-            tile.setHighlightType(HighlightType.NONE);
-        });
     }
 }
