@@ -35,7 +35,7 @@ public class Skill {
     }
 
     public boolean canUse(Entity user) {
-        return cooldown == 0
+        return currentCooldown == 0
             && user.getStatusEffectManager().canAct()
             && user.getLevel() >= requiredLevel;
     }

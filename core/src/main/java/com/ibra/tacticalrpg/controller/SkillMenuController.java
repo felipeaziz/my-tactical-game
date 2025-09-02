@@ -11,14 +11,13 @@ import com.ibra.tacticalrpg.entities.PlayerEntity;
 import com.ibra.tacticalrpg.map.HighlightType;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
+import com.ibra.tacticalrpg.skill.LineSkill;
 import com.ibra.tacticalrpg.skill.Skill;
-import com.ibra.tacticalrpg.skill.TargetType;
 import com.ibra.tacticalrpg.ui.SkillMenuState;
 
 import java.util.List;
 
-import static com.ibra.tacticalrpg.grid.IsometricGridUtils.findEntityTile;
-import static com.ibra.tacticalrpg.grid.IsometricGridUtils.getTilesInRange;
+import static com.ibra.tacticalrpg.grid.IsometricGridUtils.*;
 
 public class SkillMenuController {
     private SkillMenuState menuState = SkillMenuState.CLOSED;
@@ -89,14 +88,9 @@ public class SkillMenuController {
             selectedSkillIndex = skillIndex;
             selectedSkill = skills.get(selectedSkillIndex);
             menuState = SkillMenuState.SELECTING_TARGET;
-            //TODO also handle other target types like enemies, area or allies
-            if (selectedSkill.getTargetType().equals(TargetType.ANY)) {
-                highlightValidTargets(grid, player, selectedSkill);
-                logger.log("Selecione um alvo para " + selectedSkill.getName());
-            } else {
-                //TODO Use skill without target selection
-                logger.log("Habilidade " + selectedSkill.getName() + " usada!");
-            }
+            highlightValidTargets(grid, player, selectedSkill);
+            logger.log("Selecione um alvo para " + selectedSkill.getName());
+
         }
     }
 
@@ -140,6 +134,21 @@ public class SkillMenuController {
                         tile.setHighlighted(true);
                         tile.setHighlightType(HighlightType.SKILL);
                     }
+                }
+                break;
+            case LINE:
+                int lineLength = ((LineSkill) skill).getLineLength();
+                Tile tileNorth = grid.getTile(entityTile.getGridPositionX(), entityTile.getGridPositionY() + lineLength);
+                Tile tileSouth = grid.getTile(entityTile.getGridPositionX(), entityTile.getGridPositionY() - lineLength);
+                Tile tileEast = grid.getTile(entityTile.getGridPositionX() + lineLength, entityTile.getGridPositionY());
+                Tile tileWest = grid.getTile(entityTile.getGridPositionX() - lineLength, entityTile.getGridPositionY());
+                List<Tile> lineTiles = getTilesInLine(grid, entityTile, tileNorth, lineLength);
+                lineTiles.addAll(getTilesInLine(grid, entityTile, tileSouth, lineLength));
+                lineTiles.addAll(getTilesInLine(grid, entityTile, tileEast, lineLength));
+                lineTiles.addAll(getTilesInLine(grid, entityTile, tileWest, lineLength));
+                for (Tile tile : lineTiles) {
+                    tile.setHighlighted(true);
+                    tile.setHighlightType(HighlightType.SKILL);
                 }
                 break;
             case ALL_ENTITIES:

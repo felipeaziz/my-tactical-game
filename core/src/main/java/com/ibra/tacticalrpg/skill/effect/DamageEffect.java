@@ -15,7 +15,7 @@ public class DamageEffect implements SkillEffect {
         int defense = target.getFinalDefense();
         int damage = Math.max(1, baseDamage + attack - defense);
 
-        target.getStats().setCurrentHp(target.getStats().getCurrentMp() - damage);
+        target.getStats().setCurrentHp(target.getStats().getCurrentHp() - damage);
 
         System.out.println(source.getName() + " dealt " + damage + " damage to " + target.getName());
     }

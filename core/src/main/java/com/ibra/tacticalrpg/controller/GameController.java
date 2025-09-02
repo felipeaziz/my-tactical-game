@@ -3,6 +3,7 @@ package com.ibra.tacticalrpg.controller;
 import com.ibra.tacticalrpg.entities.EnemyEntity;
 import com.ibra.tacticalrpg.entities.Entity;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
+import com.ibra.tacticalrpg.skill.Skill;
 
 import java.util.Collections;
 import java.util.List;
@@ -82,6 +83,7 @@ public class GameController {
         // Se já agiu, encerra o turno
         if (current.isTurnDone()) {
             current.processStatusEffect();
+            current.getJob().getSkills().forEach(Skill::updateCooldown);
             advanceTurn();
         } else {
             current.takeTurn();

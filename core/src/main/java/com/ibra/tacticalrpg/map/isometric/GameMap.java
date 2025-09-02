@@ -14,6 +14,9 @@ import com.ibra.tacticalrpg.item.consumable.HealingPotion;
 import com.ibra.tacticalrpg.job.Apprentice;
 import com.ibra.tacticalrpg.job.Carrier;
 import com.ibra.tacticalrpg.map.TerrainType;
+import com.ibra.tacticalrpg.skill.LineSkill;
+import com.ibra.tacticalrpg.skill.TargetType;
+import com.ibra.tacticalrpg.skill.effect.DamageEffect;
 import com.ibra.tacticalrpg.ui.RenderItem;
 
 import java.util.ArrayList;
@@ -107,6 +110,8 @@ public class GameMap {
         Tile tile1 = getTile(2, 2);
         Entity hero = new PlayerEntity("Hero", new Apprentice());
         hero.getJob().applyInitialSkills(hero.getStats());
+        hero.getJob().addSkill(new LineSkill("Earth Slash", "Damage all entities in a line", TargetType.LINE,
+            new DamageEffect(4), 5, 1, 1, 5, true));
         hero.getPersonalInventory().addItem(new HealingPotion(), 1);
         tile1.setOccupant(hero);
         entities.add(hero);

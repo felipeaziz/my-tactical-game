@@ -6,6 +6,7 @@ public enum TargetType {
     ENEMY,
     ANY,
     AREA,
+    LINE,
     ALL_ALLIES,
     ALL_ENEMIES,
     ALL_ENTITIES,

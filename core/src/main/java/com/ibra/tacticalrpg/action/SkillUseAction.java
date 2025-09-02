@@ -6,6 +6,7 @@ import com.ibra.tacticalrpg.item.consumable.ConsumableItem;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
 import com.ibra.tacticalrpg.skill.AreaSkill;
+import com.ibra.tacticalrpg.skill.LineSkill;
 import com.ibra.tacticalrpg.skill.Skill;
 
 import java.util.List;
@@ -52,6 +53,14 @@ public class SkillUseAction implements Action {
                 }
                 AreaSkill areaSkill = (AreaSkill) skill;
                 areaSkill.useOnArea(actor, targetTile, grid);
+            }
+            case LINE -> {
+                if(targetTile == null) {
+                    System.out.println("Tile alvo inválido para usar a habilidade!");
+                    return;
+                }
+                LineSkill lineSkill = (LineSkill) skill;
+                lineSkill.useOnLine(actor, targetTile, grid);
             }
             case ALL_ENTITIES -> {
                 //TODO Implementar lógica para afetar todas as entidades
