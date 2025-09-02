@@ -4,5 +4,6 @@ public enum PlayerActionType {
     NONE,
     MOVE,
     ITEM,
+    SKILL,
     ATTACK
 }

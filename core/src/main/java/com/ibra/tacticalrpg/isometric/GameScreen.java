@@ -82,14 +82,17 @@ public class GameScreen extends ScreenAdapter implements EventLogger {
         handleTurns();
 
         Entity currentPlayer = gameController.getCurrentEntity();
-        if(cameraController.isCameraStable()
+        if (cameraController.isCameraStable()
             && currentPlayer instanceof PlayerEntity
             && !currentPlayer.isMoving()) {
             PlayerEntity player = (PlayerEntity) currentPlayer;
             uiRenderer.renderActionMenu(game.getBatch());
-            ItemMenuController itemController = playerController.getItemMenuController();
-            uiRenderer.renderItemMenu(game.getBatch(), itemController);
-            uiRenderer.renderItemStatus(game.getBatch(), itemController);
+            ItemMenuController itemMenuController = playerController.getItemMenuController();
+            SkillMenuController skillMenuController = playerController.getSkillMenuController();
+            uiRenderer.renderItemMenu(game.getBatch(), itemMenuController);
+            uiRenderer.renderItemStatus(game.getBatch(), itemMenuController);
+            uiRenderer.renderSkillMenu(game.getBatch(), skillMenuController);
+            uiRenderer.renderSkillStatus(game.getBatch(), skillMenuController);
         }
         renderEventLog();
     }

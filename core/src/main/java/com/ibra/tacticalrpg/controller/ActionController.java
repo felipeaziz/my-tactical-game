@@ -14,18 +14,23 @@ import java.util.List;
 public class ActionController {
 
     public void handleActionSelection(int actionIndex, GameMap grid, PlayerEntity player,
-                                    EventLogger logger, ItemMenuController itemMenuController) {
+                                    EventLogger logger, ItemMenuController itemMenuController,
+                                      SkillMenuController skillMenuController) {
         switch (actionIndex) {
             case 0: // Mover
                 setupMoveAction(grid, player);
                 break;
             case 1: // Atacar
+                //TODO - case 1 will be Act and it will open a new menu with options Attack, Skill list, use items and Magic (if any)
                 setupAttackAction(grid, player);
                 break;
-            case 2: // Usar Item
+            case 2: // Habilidade
+                setupSkillAction(grid, player, logger, skillMenuController);
+                break;
+            case 3: // Usar Item
                 setupItemAction(grid, player, logger, itemMenuController);
                 break;
-            case 3: // Fim do Turno
+            case 4: // Fim do Turno
                 endTurn(grid, player, logger);
                 break;
         }
@@ -55,13 +60,24 @@ public class ActionController {
         }
     }
 
+    private void setupSkillAction(GameMap grid, PlayerEntity player, EventLogger logger,
+                                  SkillMenuController skillMenuController) {
+        if (!player.hasActed()) {
+            clearHighlights(grid);
+            player.setCurrentActionType(PlayerActionType.SKILL);
+            player.setCurrentAction(null);
+            skillMenuController.openSkillMenu(player);
+            logger.log("Selecione a habilidade.");
+        }
+    }
+
     private void setupItemAction(GameMap grid, PlayerEntity player, EventLogger logger,
                                ItemMenuController itemMenuController) {
         if (!player.hasActed()) {
             clearHighlights(grid);
             player.setCurrentActionType(PlayerActionType.ITEM);
             player.setCurrentAction(null);
-            itemMenuController.openItemMenu(grid, player);
+            itemMenuController.openItemMenu(player);
             logger.log("Selecione um item para usar.");
         }
     }

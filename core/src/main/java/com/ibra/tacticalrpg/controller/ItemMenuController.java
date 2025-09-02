@@ -37,7 +37,7 @@ public class ItemMenuController {
                                     OrthographicCamera camera) {
         switch (menuState) {
             case SELECTING_ITEM:
-                handleItemSelection(grid, logger, player);
+                handleItemSelection(grid);
                 break;
             case SELECTING_TARGET:
                 handleTargetSelection(grid, entities, logger, player, camera);
@@ -46,9 +46,9 @@ public class ItemMenuController {
     }
 
     /**
-     * Abre o menu de sele��ão de items
+     * Abre o menu de seleção de items
      */
-    public void openItemMenu(GameMap grid, PlayerEntity player) {
+    public void openItemMenu(PlayerEntity player) {
         availableItems = player.getPersonalInventory().getConsumableItems();
         if (availableItems.isEmpty()) {
             System.out.println("Nenhum item consumível disponível!");
@@ -61,7 +61,7 @@ public class ItemMenuController {
     /**
      * Lida com a seleção do item no menu
      */
-    private void handleItemSelection(GameMap grid, EventLogger logger, PlayerEntity player) {
+    private void handleItemSelection(GameMap grid) {
         // Cancelar seleção
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             closeItemMenu(grid);
@@ -77,7 +77,7 @@ public class ItemMenuController {
             selectedItemIndex = itemIndex;
             selectedItem = availableItems.get(selectedItemIndex);
             menuState = ItemMenuState.SELECTING_TARGET;
-             highlightValidTargets(grid, player, selectedItem);
+            highlightValidTargets(grid, player, selectedItem);
             logger.log("Selecione um alvo para " + selectedItem.getName());
         }
     }
@@ -156,6 +156,7 @@ public class ItemMenuController {
         selectedItemIndex = 0;
         actionController.clearHighlights(grid);
     }
+
     public ItemMenuState getMenuState() {
         return menuState;
     }

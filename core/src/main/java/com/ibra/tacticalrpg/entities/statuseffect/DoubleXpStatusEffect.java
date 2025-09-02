@@ -10,6 +10,7 @@ public class DoubleXpStatusEffect extends BaseStatusEffect {
 
     @Override
     public void apply(EntityStats stats) {
+        System.out.println("Vai ganhar o dobro de XP no turno");
         //TODO - doubles the amount of XP earned by the entity
     }
 }

@@ -46,7 +46,7 @@ public abstract class BaseMenuRenderer {
     }
 
     protected void renderMenuOption(SpriteBatch batch, String text, float boxX, float boxY,
-                                  float boxWidth, boolean isHighlighted) {
+                                    float boxWidth, boolean isHighlighted) {
         if (isHighlighted) {
             font.setColor(Color.CYAN);
             batch.end();
@@ -73,7 +73,7 @@ public abstract class BaseMenuRenderer {
         return maxWidth;
     }
 
-    public int getClickedItemIndex(float screenX, float screenY) {
+    public int getClickedIndex(float screenX, float screenY) {
         float uiY = Gdx.graphics.getHeight() - screenY;
         for (int i = 0; i < itemBounds.size(); i++) {
             Rectangle bound = itemBounds.get(i);

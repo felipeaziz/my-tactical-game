@@ -106,14 +106,17 @@ public class GameMap {
     private void addEntities() {
         Tile tile1 = getTile(2, 2);
         Entity hero = new PlayerEntity("Hero", new Apprentice());
-        hero.getPersonalInventory().addItem(new HealingPotion(), 2);
-        hero.getPersonalInventory().addItem(new Antidote(), 1);
+        hero.getJob().applyInitialSkills(hero.getStats());
+        hero.getPersonalInventory().addItem(new HealingPotion(), 1);
         tile1.setOccupant(hero);
         entities.add(hero);
 
         Tile tile2 = getTile(3, 3);
         Entity companion = new PlayerEntity("Companion", new Carrier());
+        companion.getJob().applyInitialSkills(companion.getStats());
         tile2.setOccupant(companion);
+        companion.getPersonalInventory().addItem(new Antidote(), 2);
+        companion.getPersonalInventory().addItem(new HealingPotion(), 2);
         entities.add(companion);
 
         Tile tile3 = getTile(8, 8);

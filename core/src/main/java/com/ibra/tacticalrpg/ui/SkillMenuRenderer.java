@@ -5,42 +5,42 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.ibra.tacticalrpg.controller.ItemMenuController;
-import com.ibra.tacticalrpg.item.consumable.ConsumableItem;
+import com.ibra.tacticalrpg.controller.SkillMenuController;
+import com.ibra.tacticalrpg.skill.Skill;
 
 import java.util.List;
 
-public class ItemMenuRenderer extends BaseMenuRenderer {
+public class SkillMenuRenderer extends BaseMenuRenderer {
 
-    public ItemMenuRenderer(BitmapFont font, ShapeRenderer shapeRenderer) {
+    public SkillMenuRenderer(BitmapFont font, ShapeRenderer shapeRenderer) {
         super(font, shapeRenderer);
     }
 
-    public void renderItemMenu(SpriteBatch batch, ItemMenuController itemController) {
-        if (itemController.getMenuState() != ItemMenuState.SELECTING_ITEM) {
+    public void renderSkillMenu(SpriteBatch batch, SkillMenuController skillController) {
+        if (skillController.getMenuState() != SkillMenuState.SELECTING_SKILL) {
             return;
         }
-        List<ConsumableItem> availableItems = itemController.getAvailableItems();
-        if (availableItems == null || availableItems.isEmpty()) {
+        List<Skill> skills = skillController.getSkills();
+        if (skills == null || skills.isEmpty()) {
             return;
         }
 
         clearItemBounds();
-        String title = "Selecione um Item:";
-        String[] menuItems = new String[availableItems.size()];
-        for (int i = 0; i < availableItems.size(); i++) {
-            menuItems[i] = (i + 1) + ". " + availableItems.get(i).getName();
+        String title = "Selecione uma Habilidade:";
+        String[] menuSkills = new String[skills.size()];
+        for (int i = 0; i < skills.size(); i++) {
+            menuSkills[i] = (i + 1) + ". " + skills.get(i).getName();
         }
-        String instructions = "Clique no item para selecionar | Esc: Cancelar";
+        String instructions = "Clique na habilidade para selecionar | Esc: Cancelar";
 
         // Calcular largura máxima considerando todos os textos
         float maxWidth = Math.max(
             calculateMaxWidth(new String[]{title, instructions}),
-            calculateMaxWidth(menuItems)
+            calculateMaxWidth(menuSkills)
         );
 
         float boxWidth = maxWidth + 2 * PADDING;
-        float boxHeight = LINE_HEIGHT * (availableItems.size() + 3) + PADDING * 2; // +3 para título e instruções
+        float boxHeight = LINE_HEIGHT * (skills.size() + 3) + PADDING * 2; // +3 para título e instruções
         float boxX = 95f;
         float boxY = boxHeight + 20f;
 
@@ -54,8 +54,8 @@ public class ItemMenuRenderer extends BaseMenuRenderer {
         font.draw(batch, title, boxX + PADDING, y);
         y -= LINE_HEIGHT;
 
-        // Items
-        for (int i = 0; i < menuItems.length; i++) {
+        // Skills
+        for (int i = 0; i < menuSkills.length; i++) {
             addItemBound(
                 boxX + PADDING,
                 y - LINE_HEIGHT,
@@ -64,7 +64,7 @@ public class ItemMenuRenderer extends BaseMenuRenderer {
             );
 
             boolean isHighlighted = i == getClickedIndex(Gdx.input.getX(), Gdx.input.getY());
-            renderMenuOption(batch, menuItems[i], boxX, y, boxWidth, isHighlighted);
+            renderMenuOption(batch, menuSkills[i], boxX, y, boxWidth, isHighlighted);
             y -= LINE_HEIGHT;
         }
 

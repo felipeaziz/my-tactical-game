@@ -10,15 +10,18 @@ import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
 import com.ibra.tacticalrpg.ui.GameUIRenderer;
 import com.ibra.tacticalrpg.ui.ItemMenuState;
+import com.ibra.tacticalrpg.ui.SkillMenuState;
 
 import java.util.List;
 
 public class PlayerController {
     private final ActionController actionController = new ActionController();
     private final ItemMenuController itemMenuController;
+    private final SkillMenuController skillMenuController;
 
     public PlayerController() {
         this.itemMenuController = new ItemMenuController(actionController);
+        this.skillMenuController = new SkillMenuController(actionController);
     }
 
     public void handleInput(GameMap grid,
@@ -29,8 +32,11 @@ public class PlayerController {
                             GameUIRenderer uiRenderer) {
         if (!canHandleInput(player)) return;
 
-        // Se o menu de itens estiver aberto, trata a entrada dele primeiro
+        // Se o menu de itens ou skills estiver aberto, trata a entrada dele primeiro
         if (handleItemMenuInput(grid, entities, logger, player, camera, uiRenderer)) {
+            return;
+        }
+        if (handleSkillMenuInput(grid, entities, logger, player, camera, uiRenderer)) {
             return;
         }
 
@@ -49,35 +55,53 @@ public class PlayerController {
     }
 
     private boolean handleItemMenuInput(GameMap grid,
-                                      List<Entity> entities,
-                                      EventLogger logger,
-                                      PlayerEntity player,
-                                      OrthographicCamera camera,
-                                      GameUIRenderer uiRenderer) {
+                                        List<Entity> entities,
+                                        EventLogger logger,
+                                        PlayerEntity player,
+                                        OrthographicCamera camera,
+                                        GameUIRenderer uiRenderer) {
         if (itemMenuController.getMenuState() == ItemMenuState.CLOSED) {
             return false;
         }
 
-        if(uiRenderer.handleItemMenuClick(itemMenuController, grid, logger, player)) {
+        if (uiRenderer.handleItemMenuClick(itemMenuController, grid, logger, player)) {
             return true;
         }
         itemMenuController.handleItemMenuInput(grid, entities, logger, player, camera);
         return true;
     }
 
+    private boolean handleSkillMenuInput(GameMap grid,
+                                         List<Entity> entities,
+                                         EventLogger logger,
+                                         PlayerEntity player,
+                                         OrthographicCamera camera,
+                                         GameUIRenderer uiRenderer) {
+        if (skillMenuController.getMenuState() == SkillMenuState.CLOSED) {
+            return false;
+        }
+
+        if (uiRenderer.handleSkillMenuClick(skillMenuController, grid, logger, player)) {
+            return true;
+        }
+        skillMenuController.handleSkillMenuInput(grid, entities, logger, player, camera);
+        return true;
+    }
+
     private void handleMouseInput(GameMap grid,
-                                List<Entity> entities,
-                                EventLogger logger,
-                                PlayerEntity player,
-                                OrthographicCamera camera,
-                                GameUIRenderer uiRenderer) {
+                                  List<Entity> entities,
+                                  EventLogger logger,
+                                  PlayerEntity player,
+                                  OrthographicCamera camera,
+                                  GameUIRenderer uiRenderer) {
         float mouseX = Gdx.input.getX();
         float mouseY = Gdx.input.getY();
 
         // Tenta selecionar uma ação do menu
-        int actionIndex = uiRenderer.getClickedItemIndex(mouseX, mouseY);
+        int actionIndex = uiRenderer.getClickedIndex(mouseX, mouseY);
         if (actionIndex >= 0) {
-            actionController.handleActionSelection(actionIndex, grid, player, logger, itemMenuController);
+            actionController.handleActionSelection(actionIndex, grid, player, logger,
+                itemMenuController, skillMenuController);
             return;
         }
 
@@ -100,10 +124,10 @@ public class PlayerController {
     }
 
     private void executeActionOnTile(GameMap grid,
-                                   List<Entity> entities,
-                                   EventLogger logger,
-                                   PlayerEntity player,
-                                   Tile targetTile) {
+                                     List<Entity> entities,
+                                     EventLogger logger,
+                                     PlayerEntity player,
+                                     Tile targetTile) {
         switch (player.getCurrentActionType()) {
             case MOVE:
                 actionController.executeMove(grid, logger, player, targetTile);
@@ -122,5 +146,9 @@ public class PlayerController {
 
     public ItemMenuController getItemMenuController() {
         return itemMenuController;
+    }
+
+    public SkillMenuController getSkillMenuController() {
+        return skillMenuController;
     }
 }

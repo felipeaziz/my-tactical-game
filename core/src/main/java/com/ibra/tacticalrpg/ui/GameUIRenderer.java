@@ -8,20 +8,23 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.ibra.tacticalrpg.controller.EventLogger;
 import com.ibra.tacticalrpg.controller.ItemMenuController;
+import com.ibra.tacticalrpg.controller.SkillMenuController;
 import com.ibra.tacticalrpg.entities.PlayerEntity;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 
 public class GameUIRenderer extends BaseMenuRenderer {
     private final ItemMenuRenderer itemMenuRenderer;
+    private final SkillMenuRenderer skillMenuRenderer;
 
     public GameUIRenderer(BitmapFont font) {
         super(font, new ShapeRenderer());
         this.itemMenuRenderer = new ItemMenuRenderer(font, shapeRenderer);
+        this.skillMenuRenderer = new SkillMenuRenderer(font, shapeRenderer);
     }
 
     public void renderActionMenu(SpriteBatch batch) {
         clearItemBounds();
-        String[] options = {"Mover", "Atacar", "Usar Item", "Fim do Turno"};
+        String[] options = {"Mover", "Atacar", "Habilidade", "Usar Item", "Fim do Turno"};
         float maxWidth = calculateMaxWidth(options);
         float boxWidth = maxWidth + 2 * PADDING;
         float boxHeight = options.length * LINE_HEIGHT + PADDING * 2;
@@ -41,14 +44,14 @@ public class GameUIRenderer extends BaseMenuRenderer {
                 LINE_HEIGHT
             );
 
-            boolean isHighlighted = i == getClickedItemIndex(Gdx.input.getX(), Gdx.input.getY());
+            boolean isHighlighted = i == getClickedIndex(Gdx.input.getX(), Gdx.input.getY());
             renderMenuOption(batch, options[i], boxX, y, boxWidth, isHighlighted);
         }
         batch.end();
     }
 
     public void renderItemMenu(SpriteBatch batch, ItemMenuController itemController) {
-        itemMenuRenderer.renderItemMenu(batch, itemController, getUiMatrix());
+        itemMenuRenderer.renderItemMenu(batch, itemController);
     }
 
     public void renderItemStatus(SpriteBatch batch, ItemMenuController itemController) {
@@ -80,9 +83,51 @@ public class GameUIRenderer extends BaseMenuRenderer {
             float mouseX = Gdx.input.getX();
             float mouseY = Gdx.input.getY();
 
-            int clickedItemIndex = itemMenuRenderer.getClickedItemIndex(mouseX, mouseY);
+            int clickedItemIndex = itemMenuRenderer.getClickedIndex(mouseX, mouseY);
             if (clickedItemIndex >= 0) {
                 itemController.handleItemClick(clickedItemIndex, grid, logger, player);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void renderSkillMenu(SpriteBatch batch, SkillMenuController skillController) {
+        skillMenuRenderer.renderSkillMenu(batch, skillController);
+    }
+
+    public void renderSkillStatus(SpriteBatch batch, SkillMenuController skillController) {
+        if (skillController.getMenuState() == SkillMenuState.SELECTING_TARGET) {
+            Matrix4 uiMatrix = getUiMatrix();
+            batch.setProjectionMatrix(uiMatrix);
+
+            batch.begin();
+            font.setColor(Color.YELLOW);
+            String message = "Clique no alvo para usar " +
+                (skillController.getSelectedSkill() != null ?
+                    skillController.getSelectedSkill().getName() : "habilidade") +
+                " | ESC para cancelar";
+            font.draw(batch, message, 20, Gdx.graphics.getHeight() - 100);
+            font.setColor(Color.WHITE);
+            batch.end();
+        }
+    }
+
+    public boolean handleSkillMenuClick(SkillMenuController skillController,
+                                        GameMap grid,
+                                        EventLogger logger,
+                                        PlayerEntity player) {
+        if (skillController.getMenuState() != SkillMenuState.SELECTING_SKILL) {
+            return false;
+        }
+
+        if (Gdx.input.justTouched()) {
+            float mouseX = Gdx.input.getX();
+            float mouseY = Gdx.input.getY();
+
+            int clickedItemIndex = skillMenuRenderer.getClickedIndex(mouseX, mouseY);
+            if (clickedItemIndex >= 0) {
+                skillController.handleSkillClick(clickedItemIndex, grid, logger, player);
                 return true;
             }
         }
