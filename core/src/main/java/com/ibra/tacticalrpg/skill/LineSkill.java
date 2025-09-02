@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.ibra.tacticalrpg.grid.IsometricGridUtils.findEntityTile;
-import static com.ibra.tacticalrpg.grid.IsometricGridUtils.getTilesInLine;
+import static com.ibra.tacticalrpg.grid.IsometricGridUtils.getTilesInLineDirection;
 
 public class LineSkill extends Skill {
     private final int lineLength;
@@ -36,7 +36,7 @@ public class LineSkill extends Skill {
             return;
         }
         Tile sourceTile = findEntityTile(gameMap, source);
-        List<Tile> tilesInLine = getTilesInLine(gameMap, sourceTile, targetTile, lineLength);
+        List<Tile> tilesInLine = getTilesInLineDirection(gameMap, sourceTile, targetTile, lineLength);
         List<Entity> entitiesHit = new ArrayList<>();
         for (Tile tile : tilesInLine) {
             if (tile.isOccupied() && tile.getOccupant() != source) {

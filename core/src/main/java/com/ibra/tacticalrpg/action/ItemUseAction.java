@@ -22,24 +22,37 @@ public class ItemUseAction implements Action {
 
     @Override
     public void execute(Entity actor, Entity target) {
-        if(item == null || actor == null) {
+        if (!isValidAction(actor)) {
             return;
         }
-        Entity actualTarget = target;
-        if (targetTile != null && targetTile.isOccupied()) {
-            actualTarget = targetTile.getOccupant();
-        } else if (targetTile == null) {
-            actualTarget = actor; // Usa em si mesmo
-        }
+
+        Entity actualTarget = determineTarget(actor, target);
         if (actualTarget == null) {
             System.out.println("Alvo inválido para usar o item!");
             return;
         }
 
+        useItem(actor, actualTarget);
+    }
+
+    private boolean isValidAction(Entity actor) {
+        return item != null && actor != null;
+    }
+
+    private Entity determineTarget(Entity actor, Entity target) {
+        if (targetTile != null && targetTile.isOccupied()) {
+            return targetTile.getOccupant();
+        } else if (targetTile == null) {
+            return actor; // Usa em si mesmo
+        }
+        return target;
+    }
+
+    private void useItem(Entity actor, Entity target) {
         if (actor.getPersonalInventory().removeItem(item, 1)) {
-            item.use(actualTarget);
+            item.use(target);
             System.out.println(actor.getName() + " usou " + item.getName() +
-                (actualTarget == actor ? " em si mesmo" : " em " + actualTarget.getName()));
+                (target == actor ? " em si mesmo" : " em " + target.getName()));
         } else {
             System.out.println("Não foi possível usar o item " + item.getName());
         }

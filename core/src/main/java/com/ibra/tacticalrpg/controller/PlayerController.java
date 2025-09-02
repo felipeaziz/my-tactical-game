@@ -67,7 +67,7 @@ public class PlayerController {
         if (uiRenderer.handleItemMenuClick(itemMenuController, grid, logger, player)) {
             return true;
         }
-        itemMenuController.handleItemMenuInput(grid, entities, logger, player, camera);
+        itemMenuController.handleItemMenuInput(grid, logger, player, camera);
         return true;
     }
 
@@ -84,7 +84,7 @@ public class PlayerController {
         if (uiRenderer.handleSkillMenuClick(skillMenuController, grid, logger, player)) {
             return true;
         }
-        skillMenuController.handleSkillMenuInput(grid, entities, logger, player, camera);
+        skillMenuController.handleSkillMenuInput(grid, logger, player, camera);
         return true;
     }
 
@@ -141,7 +141,7 @@ public class PlayerController {
             player.setActionDone(true);
             player.setCurrentActionType(PlayerActionType.NONE);
         }
-        actionController.clearHighlights(grid);
+        grid.clearHighlights();
     }
 
     public ItemMenuController getItemMenuController() {

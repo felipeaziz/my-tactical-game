@@ -13,10 +13,13 @@ import com.ibra.tacticalrpg.item.consumable.Antidote;
 import com.ibra.tacticalrpg.item.consumable.HealingPotion;
 import com.ibra.tacticalrpg.job.Apprentice;
 import com.ibra.tacticalrpg.job.Carrier;
+import com.ibra.tacticalrpg.map.HighlightType;
 import com.ibra.tacticalrpg.map.TerrainType;
 import com.ibra.tacticalrpg.skill.LineSkill;
+import com.ibra.tacticalrpg.skill.Skill;
 import com.ibra.tacticalrpg.skill.TargetType;
 import com.ibra.tacticalrpg.skill.effect.DamageEffect;
+import com.ibra.tacticalrpg.skill.effect.HealSkillEffect;
 import com.ibra.tacticalrpg.ui.RenderItem;
 
 import java.util.ArrayList;
@@ -119,6 +122,8 @@ public class GameMap {
         Tile tile2 = getTile(3, 3);
         Entity companion = new PlayerEntity("Companion", new Carrier());
         companion.getJob().applyInitialSkills(companion.getStats());
+        companion.getJob().addSkill(new Skill("Cure", "Heals an ally", TargetType.ANY,
+            new HealSkillEffect(1), 1, 1, 1));
         tile2.setOccupant(companion);
         companion.getPersonalInventory().addItem(new Antidote(), 2);
         companion.getPersonalInventory().addItem(new HealingPotion(), 2);
@@ -200,5 +205,12 @@ public class GameMap {
 
     public List<Entity> getEntities() {
         return entities;
+    }
+
+    public void clearHighlights() {
+        base.forEach(tile -> {
+            tile.setHighlighted(false);
+            tile.setHighlightType(HighlightType.NONE);
+        });
     }
 }

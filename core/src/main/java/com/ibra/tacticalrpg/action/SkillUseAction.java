@@ -8,6 +8,7 @@ import com.ibra.tacticalrpg.map.isometric.Tile;
 import com.ibra.tacticalrpg.skill.AreaSkill;
 import com.ibra.tacticalrpg.skill.LineSkill;
 import com.ibra.tacticalrpg.skill.Skill;
+import com.ibra.tacticalrpg.skill.TargetType;
 
 import java.util.List;
 
@@ -30,42 +31,66 @@ public class SkillUseAction implements Action {
 
     @Override
     public void execute(Entity actor, Entity target) {
-        if (skill == null || actor == null) {
+        if (!isValidAction(actor)) {
             return;
         }
-        if (targetTile != null && targetTile.isOccupied()) {
-            target = targetTile.getOccupant();
+
+        Entity actualTarget = determineTarget(target);
+        if (actualTarget == null && skill.getTargetType() != TargetType.AREA && skill.getTargetType() != TargetType.LINE) {
+            System.out.println("Alvo inválido para usar a habilidade!");
+            return;
         }
 
+        executeSkill(actor, actualTarget);
+    }
+
+    private boolean isValidAction(Entity actor) {
+        return skill != null && actor != null;
+    }
+
+    private Entity determineTarget(Entity target) {
+        if (targetTile != null && targetTile.isOccupied()) {
+            return targetTile.getOccupant();
+        }
+        return target;
+    }
+
+    private void executeSkill(Entity actor, Entity target) {
         switch (skill.getTargetType()) {
             case SELF -> skill.use(actor, actor);
-            case ALLY, ENEMY, ANY -> {
-                if (target == null) {
-                    System.out.println("Alvo inválido para usar a habilidade!");
-                    return;
-                }
-                skill.use(actor, target);
-            }
-            case AREA -> {
-                if (targetTile == null) {
-                    System.out.println("Tile alvo inválido para usar a habilidade!");
-                    return;
-                }
-                AreaSkill areaSkill = (AreaSkill) skill;
-                areaSkill.useOnArea(actor, targetTile, grid);
-            }
-            case LINE -> {
-                if(targetTile == null) {
-                    System.out.println("Tile alvo inválido para usar a habilidade!");
-                    return;
-                }
-                LineSkill lineSkill = (LineSkill) skill;
-                lineSkill.useOnLine(actor, targetTile, grid);
-            }
-            case ALL_ENTITIES -> {
-                //TODO Implementar lógica para afetar todas as entidades
-            }
-            //TODO implementar LINE skill
+            case ALLY, ENEMY, ANY -> executeTargetedSkill(actor, target);
+            case AREA -> executeAreaSkill(actor);
+            case LINE -> executeLineSkill(actor);
         }
+    }
+
+    private void executeTargetedSkill(Entity actor, Entity target) {
+        if (target == null) {
+            System.out.println("Alvo inválido para usar a habilidade!");
+            return;
+        }
+        skill.use(actor, target);
+    }
+
+    private void executeAreaSkill(Entity actor) {
+        if (targetTile == null) {
+            System.out.println("Tile alvo inválido para usar a habilidade!");
+            return;
+        }
+        AreaSkill areaSkill = (AreaSkill) skill;
+        areaSkill.useOnArea(actor, targetTile, grid);
+    }
+
+    private void executeLineSkill(Entity actor) {
+        if (targetTile == null) {
+            System.out.println("Tile alvo inválido para usar a habilidade!");
+            return;
+        }
+        LineSkill lineSkill = (LineSkill) skill;
+        lineSkill.useOnLine(actor, targetTile, grid);
+    }
+
+    public Skill getSkill() {
+        return skill;
     }
 }

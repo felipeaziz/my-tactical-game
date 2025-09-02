@@ -22,9 +22,9 @@ public class IsometricGridUtils {
     /**
      * Finds a path from start to end using the A* algorithm.
      *
-     * @param grid The game map containing the tiles.
+     * @param grid  The game map containing the tiles.
      * @param start The starting tile.
-     * @param end The ending tile.
+     * @param end   The ending tile.
      * @return A list of tiles representing the path, or an empty list if no path is found.
      */
     public static List<Tile> findPath(GameMap grid, Tile start, Tile end) {
@@ -133,12 +133,14 @@ public class IsometricGridUtils {
         return (col - row) * (TILE_WIDTH / 2f);
     }
 
-    /** Útil para skills de área (AOE).
-     * @param grid O mapa do jogo
+    /**
+     * Útil para skills de área (AOE).
+     *
+     * @param grid       O mapa do jogo
      * @param centerTile O tile central da área
-     * @param radius O raio da área
+     * @param radius     O raio da área
      * @return Lista de tiles dentro do raio
-    */
+     */
     public static List<Tile> getTilesInRange(GameMap grid, Tile centerTile, int radius) {
         List<Tile> tilesInRange = new ArrayList<>();
         if (centerTile == null || radius <= 0) {
@@ -162,12 +164,52 @@ public class IsometricGridUtils {
     }
 
     /**
+     * Encontra todos os tiles em uma linha reta a partir de um ponto inicial em direção a um tile alvo.
+     * Útil para skills que afetam uma linha (raio, lança, etc.).
+     * @param grid          O mapa do jogo
+     * @param start         Tile inicial
+     * @param targetTile    Direção da linha
+     * @param maxLength     Comprimento da linha
+     * @return Lista de tiles na linha
+     */
+    public static List<Tile> getTilesInLineDirection(GameMap grid, Tile start, Tile targetTile, int maxLength) {
+        List<Tile> tilesInLine = new ArrayList<>();
+        if (start == null || targetTile == null || maxLength <= 0) {
+            return tilesInLine;
+        }
+        // Calcula a direção
+        int x0 = start.getGridPositionX();
+        int y0 = start.getGridPositionY();
+        int x1 = targetTile.getGridPositionX();
+        int y1 = targetTile.getGridPositionY();
+        // Normaliza a direção para ter incrementos de -1, 0 ou 1
+        int dx = Integer.compare(x1 - x0, 0);
+        int dy = Integer.compare(y1 - y0, 0);
+        int x = x0;
+        int y = y0;
+        // Inclui o tile inicial
+        tilesInLine.add(start);
+        // Continua na mesma direção até atingir maxLength
+        for (int step = 1; step < maxLength; step++) {
+            x += dx;
+            y += dy;
+            Tile nextTile = grid.getTile(x, y);
+            if (nextTile == null) {
+                break;
+            }
+            tilesInLine.add(nextTile);
+        }
+
+        return tilesInLine;
+    }
+
+    /**
      * Encontra todos os tiles em uma linha reta entre dois pontos.
      * Útil para skills que afetam uma linha (raio, lança, etc.).
      *
-     * @param grid O mapa do jogo
-     * @param start Tile inicial
-     * @param end Tile final
+     * @param grid      O mapa do jogo
+     * @param start     Tile inicial
+     * @param end       Tile final
      * @param maxLength Comprimento máximo da linha (para limitar alcance)
      * @return Lista de tiles na linha
      */
@@ -224,11 +266,11 @@ public class IsometricGridUtils {
      * Encontra tiles em um cone a partir de um ponto inicial.
      * Útil para skills como "breath attacks" ou ataques direcionais.
      *
-     * @param grid O mapa do jogo
-     * @param origin Tile de origem do cone
+     * @param grid      O mapa do jogo
+     * @param origin    Tile de origem do cone
      * @param direction Direção do cone (0=Norte, 1=Leste, 2=Sul, 3=Oeste)
-     * @param range Alcance do cone
-     * @param width Largura do cone (em tiles)
+     * @param range     Alcance do cone
+     * @param width     Largura do cone (em tiles)
      * @return Lista de tiles no cone
      */
     public static List<Tile> getTilesInCone(GameMap grid, Tile origin, int direction, int range, int width) {
@@ -266,9 +308,9 @@ public class IsometricGridUtils {
      * Verifica se há linha de visão clara entre dois tiles.
      * Útil para skills que requerem line of sight.
      *
-     * @param grid O mapa do jogo
+     * @param grid  O mapa do jogo
      * @param start Tile inicial
-     * @param end Tile final
+     * @param end   Tile final
      * @return true se há linha de visão clara
      */
     public static boolean hasLineOfSight(GameMap grid, Tile start, Tile end) {
@@ -290,8 +332,8 @@ public class IsometricGridUtils {
      * Encontra todos os tiles em um anel (donut) ao redor de um ponto.
      * Útil para skills que afetam apenas a borda de uma área.
      *
-     * @param grid O mapa do jogo
-     * @param centerTile O tile central
+     * @param grid        O mapa do jogo
+     * @param centerTile  O tile central
      * @param innerRadius Raio interno (tiles dentro deste raio não são incluídos)
      * @param outerRadius Raio externo
      * @return Lista de tiles no anel

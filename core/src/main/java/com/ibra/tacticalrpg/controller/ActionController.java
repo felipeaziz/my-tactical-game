@@ -1,5 +1,6 @@
 package com.ibra.tacticalrpg.controller;
 
+import com.ibra.tacticalrpg.action.Action;
 import com.ibra.tacticalrpg.action.AttackAction;
 import com.ibra.tacticalrpg.action.MoveAction;
 import com.ibra.tacticalrpg.entities.Entity;
@@ -9,19 +10,29 @@ import com.ibra.tacticalrpg.map.HighlightType;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
 
+import java.util.Collection;
 import java.util.List;
 
 public class ActionController {
+    private void setupAction(GameMap grid, PlayerEntity player, PlayerActionType actionType,
+                           Collection<Tile> highlightTiles, HighlightType highlightType, Action action) {
+        grid.clearHighlights();
+        highlightTiles.forEach(tile -> {
+            tile.setHighlighted(true);
+            tile.setHighlightType(highlightType);
+        });
+        player.setCurrentActionType(actionType);
+        player.setCurrentAction(action);
+    }
 
     public void handleActionSelection(int actionIndex, GameMap grid, PlayerEntity player,
                                     EventLogger logger, ItemMenuController itemMenuController,
-                                      SkillMenuController skillMenuController) {
+                                    SkillMenuController skillMenuController) {
         switch (actionIndex) {
             case 0: // Mover
                 setupMoveAction(grid, player);
                 break;
             case 1: // Atacar
-                //TODO - case 1 will be Act and it will open a new menu with options Attack, Skill list, use items and Magic (if any)
                 setupAttackAction(grid, player);
                 break;
             case 2: // Habilidade
@@ -38,32 +49,26 @@ public class ActionController {
 
     private void setupMoveAction(GameMap grid, PlayerEntity player) {
         if (!player.hasMoved()) {
-            clearHighlights(grid);
-            player.getMovableCells(grid).forEach(tile -> {
-                tile.setHighlighted(true);
-                tile.setHighlightType(HighlightType.MOVE);
-            });
-            player.setCurrentActionType(PlayerActionType.MOVE);
-            player.setCurrentAction(new MoveAction(grid, null, null));
+            setupAction(grid, player, PlayerActionType.MOVE,
+                       player.getMovableCells(grid),
+                       HighlightType.MOVE,
+                       new MoveAction(grid, null, null));
         }
     }
 
     private void setupAttackAction(GameMap grid, PlayerEntity player) {
         if (!player.hasActed()) {
-            clearHighlights(grid);
-            player.getAttackableCells(grid).forEach(tile -> {
-                tile.setHighlighted(true);
-                tile.setHighlightType(HighlightType.ATTACK);
-            });
-            player.setCurrentActionType(PlayerActionType.ATTACK);
-            player.setCurrentAction(new AttackAction(grid, null));
+            setupAction(grid, player, PlayerActionType.ATTACK,
+                       player.getAttackableCells(grid),
+                       HighlightType.ATTACK,
+                       new AttackAction(grid, null));
         }
     }
 
     private void setupSkillAction(GameMap grid, PlayerEntity player, EventLogger logger,
-                                  SkillMenuController skillMenuController) {
+                                SkillMenuController skillMenuController) {
         if (!player.hasActed()) {
-            clearHighlights(grid);
+            grid.clearHighlights();
             player.setCurrentActionType(PlayerActionType.SKILL);
             player.setCurrentAction(null);
             skillMenuController.openSkillMenu(player);
@@ -74,7 +79,7 @@ public class ActionController {
     private void setupItemAction(GameMap grid, PlayerEntity player, EventLogger logger,
                                ItemMenuController itemMenuController) {
         if (!player.hasActed()) {
-            clearHighlights(grid);
+            grid.clearHighlights();
             player.setCurrentActionType(PlayerActionType.ITEM);
             player.setCurrentAction(null);
             itemMenuController.openItemMenu(player);
@@ -88,7 +93,7 @@ public class ActionController {
         player.setActedThisTurn(true);
         player.setCurrentAction(null);
         player.setCurrentActionType(PlayerActionType.NONE);
-        clearHighlights(grid);
+        grid.clearHighlights();
         logger.log("Turno encerrado.");
     }
 
@@ -123,12 +128,5 @@ public class ActionController {
             }
             player.setActedThisTurn(true);
         }
-    }
-
-    public void clearHighlights(GameMap grid) {
-        grid.getBaseTiles().forEach(tile -> {
-            tile.setHighlighted(false);
-            tile.setHighlightType(HighlightType.NONE);
-        });
     }
 }
