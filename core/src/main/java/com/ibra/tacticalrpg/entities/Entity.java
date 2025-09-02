@@ -298,4 +298,9 @@ public abstract class Entity {
     public PersonalInventory getPersonalInventory() {
         return personalInventory;
     }
+
+    public boolean isAllyOf(Entity other) {
+        if (this instanceof PlayerEntity && other instanceof PlayerEntity) return true;
+        return this instanceof EnemyEntity && other instanceof EnemyEntity;
+    }
 }
