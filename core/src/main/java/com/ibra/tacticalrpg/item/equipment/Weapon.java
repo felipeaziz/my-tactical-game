@@ -2,7 +2,6 @@ package com.ibra.tacticalrpg.item.equipment;
 
 import com.ibra.tacticalrpg.item.ItemType;
 
-//TODO - maybe a weapon should not be an item.
 public class Weapon extends Equipment {
     private final int attackPower;
     private final int range;

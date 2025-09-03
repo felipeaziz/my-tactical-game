@@ -7,7 +7,7 @@ public class ThrowItemSkillEffect implements SkillEffect {
     @Override
     public void apply(Entity source, Entity target) {
         System.out.println("ThrowItem Skill Effect");
-        /* TODO - show list of items from the SharedInventory
+        /* TODO - This should be a passive skill effect that allows the user to throw an item
          * If target is in range (range from the skill), use item on target
          */
     }

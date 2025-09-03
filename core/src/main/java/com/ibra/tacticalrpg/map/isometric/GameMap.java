@@ -76,7 +76,7 @@ public class GameMap {
     }
 
     public void fillMap() {
-        // Fill the map with tiles or entities
+        // Fill the map with tiles
         for (int row = 9; row >= 0; row--) {
             for (int col = 9; col >= 0; col--) {
                 float x = calculateWorldPositionX(col, row); // Adjusted for isometric projection
