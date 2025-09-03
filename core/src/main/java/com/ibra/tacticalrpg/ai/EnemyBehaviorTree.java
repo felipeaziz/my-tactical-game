@@ -57,6 +57,8 @@ public class EnemyBehaviorTree {
                 if (target != null) {
                     moveTowardsTarget(enemy, target);
                 }
+                // Marca como movido mesmo se não houver movimentos possíveis
+                enemy.setMovedThisTurn(true);
             }
             success();
         }
