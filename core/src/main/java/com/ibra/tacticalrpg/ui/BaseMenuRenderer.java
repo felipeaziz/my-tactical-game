@@ -55,10 +55,9 @@ public abstract class BaseMenuRenderer {
             shapeRenderer.rect(boxX + 2, boxY - LINE_HEIGHT + 5, boxWidth - 4, LINE_HEIGHT);
             shapeRenderer.end();
             batch.begin();
-        } else {
-            font.setColor(Color.WHITE);
         }
         font.draw(batch, text, boxX + PADDING, boxY);
+        font.setColor(Color.WHITE);
     }
 
     protected float calculateMaxWidth(String[] texts) {

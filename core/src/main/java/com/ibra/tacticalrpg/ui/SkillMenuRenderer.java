@@ -52,6 +52,7 @@ public class SkillMenuRenderer extends BaseMenuRenderer {
         // Título
         font.setColor(Color.YELLOW);
         font.draw(batch, title, boxX + PADDING, y);
+        font.setColor(Color.WHITE);
         y -= LINE_HEIGHT;
 
         // Skills
