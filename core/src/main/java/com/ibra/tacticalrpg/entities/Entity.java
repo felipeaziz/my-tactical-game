@@ -12,7 +12,6 @@ import com.ibra.tacticalrpg.job.Carrier;
 import com.ibra.tacticalrpg.job.Job;
 import com.ibra.tacticalrpg.map.isometric.GameMap;
 import com.ibra.tacticalrpg.map.isometric.Tile;
-import com.ibra.tacticalrpg.skill.effect.ThrowItemSkillEffect;
 
 import java.util.*;
 
